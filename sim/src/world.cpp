@@ -5,7 +5,7 @@
 namespace sim {
 
 EntityHandle World::spawn(EntityKind kind) noexcept {
-    uint32_t index;
+    uint32_t index{};
 
     if (!free_indices_.empty()) {
         index = free_indices_.back();

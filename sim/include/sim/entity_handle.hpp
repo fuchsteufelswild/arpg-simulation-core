@@ -9,7 +9,7 @@ namespace sim {
 struct EntityHandle {
     uint32_t index = 0;
     uint16_t generation = 0;
-    uint16_t pad = 0;  // padding to make the struct explicitly 8 bytes
+    uint16_t _pad = 0;  // NOLINT(readability-identifier-naming)
 
     [[nodiscard]] constexpr bool is_null() const noexcept { return generation == 0; }
 
