@@ -1,0 +1,43 @@
+# Build outputs
+build/
+out/
+*.exe
+*.dll
+*.lib
+*.exp
+*.pdb
+*.ilk
+*.obj
+
+# IDE / editor
+.vscode/
+.vs/
+*.user
+*.suo
+CMakeUserPresets.json
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+*.cmake.in
+
+# vcpkg local install
+vcpkg_installed/
+
+# Unity
+unity/Library/
+unity/Temp/
+unity/Logs/
+unity/UserSettings/
+unity/obj/
+unity/Build/
+unity/MemoryCaptures/
+unity/*.csproj
+unity/*.sln
+unity/Assets/Plugins/sim_api.dll
+unity/Assets/Plugins/sim_api.dll.meta
+
+# OS
+Thumbs.db
+.DS_Store
