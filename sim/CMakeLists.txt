@@ -1,5 +1,6 @@
 add_library(sim STATIC
     src/version.cpp
+    src/world.cpp
 )
 
 target_include_directories(sim

@@ -2,6 +2,7 @@ find_package(Catch2 3 REQUIRED)
 
 add_executable(sim_tests
     test_smoke.cpp
+    test_world.cpp
 )
 
 target_link_libraries(sim_tests

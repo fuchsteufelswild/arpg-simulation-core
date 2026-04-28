@@ -1,0 +1,85 @@
+#include "sim/world.hpp"
+
+#include <cassert>
+
+namespace sim {
+
+EntityHandle World::spawn(EntityKind kind) noexcept {
+    uint32_t index;
+
+    if (!free_indices_.empty()) {
+        index = free_indices_.back();
+        free_indices_.pop_back();
+
+        kinds_[index] = kind;
+        transforms_[index] = {};
+        healths_[index] = {};
+    } else {
+        index = static_cast<uint32_t>(generations_.size());
+        generations_.push_back(1);
+        kinds_.push_back(kind);
+        transforms_.emplace_back();
+        healths_.emplace_back();
+    }
+
+    ++alive_count_;
+    return EntityHandle{
+        .index = index,
+        .generation = generations_[index],
+    };
+}
+
+void World::kill(EntityHandle handle) noexcept {
+    if (!is_alive(handle)) {
+        return;
+    }
+
+    const uint32_t index = handle.index;
+
+    ++generations_[index];
+    if (generations_[index] == 0) {
+        generations_[index] = 1;
+    }
+
+    kinds_[index] = EntityKind::None;
+
+    free_indices_.push_back(index);
+    --alive_count_;
+}
+
+bool World::is_alive(EntityHandle handle) const noexcept {
+    if (handle.is_null()) {
+        return false;
+    }
+    if (!index_in_bounds(handle.index)) {
+        return false;
+    }
+    return generations_[handle.index] == handle.generation;
+}
+
+Transform& World::transform(EntityHandle handle) noexcept {
+    assert(is_alive(handle) && "transform() called with stale handle");
+    return transforms_[handle.index];
+}
+
+const Transform& World::transform(EntityHandle handle) const noexcept {
+    assert(is_alive(handle) && "transform() called with stale handle");
+    return transforms_[handle.index];
+}
+
+Health& World::health(EntityHandle handle) noexcept {
+    assert(is_alive(handle) && "health() called with stale handle");
+    return healths_[handle.index];
+}
+
+const Health& World::health(EntityHandle handle) const noexcept {
+    assert(is_alive(handle) && "health() called with stale handle");
+    return healths_[handle.index];
+}
+
+EntityKind World::kind(EntityHandle handle) const noexcept {
+    assert(is_alive(handle) && "kind() called with stale handle");
+    return kinds_[handle.index];
+}
+
+}  // namespace sim
