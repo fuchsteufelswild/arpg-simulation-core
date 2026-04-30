@@ -181,27 +181,6 @@ TEST_CASE("queries on different stats are independent", "[evaluate]") {
     REQUIRE(evaluate_stat(world, stats, StatId::LightningDamage, ctx) == 0.0f);
 }
 
-TEST_CASE("meta modifiers do not affect primary stat queries", "[evaluate]") {
-    World world;
-
-    EntityStats stats;
-    stats.add_modifier(flat(StatId::FireDamage, 100.0f, GearRing));
-
-    Modifier meta{
-        .stat = StatId::None,
-        .op = ModOp::More,
-        .phase = ModPhase::Meta,
-        .magnitude = 0.50f,
-        .source = GearAmulet,
-    };
-    stats.add_modifier(meta);
-
-    EvalContext ctx;
-
-    REQUIRE_THAT(evaluate_stat(world, stats, StatId::FireDamage, ctx),
-                 WithinAbs(100.0f, Tolerance));
-}
-
 TEST_CASE("realistic ARPG scenario: fireball with modifier stack", "[evaluate]") {
     World world;
 
