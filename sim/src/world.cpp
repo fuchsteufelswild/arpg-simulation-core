@@ -14,12 +14,14 @@ EntityHandle World::spawn(EntityKind kind) noexcept {
         kinds_[index] = kind;
         transforms_[index] = {};
         healths_[index] = {};
+        recent_events_[index].clear();
     } else {
         index = static_cast<uint32_t>(generations_.size());
         generations_.push_back(1);
         kinds_.push_back(kind);
         transforms_.emplace_back();
         healths_.emplace_back();
+        recent_events_.emplace_back();
     }
 
     ++alive_count_;
@@ -80,6 +82,16 @@ const Health& World::health(EntityHandle handle) const noexcept {
 EntityKind World::kind(EntityHandle handle) const noexcept {
     assert(is_alive(handle) && "kind() called with stale handle");
     return kinds_[handle.index];
+}
+
+RecentEvents& World::recent_events(EntityHandle handle) noexcept {
+    assert(is_alive(handle) && "recent_events() called with stale handle");
+    return recent_events_[handle.index];
+}
+
+const RecentEvents& World::recent_events(EntityHandle handle) const noexcept {
+    assert(is_alive(handle) && "recent_events() called with stale handle");
+    return recent_events_[handle.index];
 }
 
 }  // namespace sim

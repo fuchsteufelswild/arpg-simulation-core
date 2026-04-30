@@ -7,8 +7,11 @@
 namespace sim {
 
 class EntityStats;
+class World;
 
-[[nodiscard]] SimFloat
-evaluate_stat(const EntityStats& stats, StatId stat, const EvalContext& ctx) noexcept;
+[[nodiscard]] SimFloat evaluate_stat(const World& world,
+                                     const EntityStats& stats,
+                                     StatId stat,
+                                     const EvalContext& ctx) noexcept;
 
 }  // namespace sim

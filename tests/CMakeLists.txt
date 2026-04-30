@@ -6,6 +6,8 @@ add_executable(sim_tests
     test_modifier.cpp
     test_entity_stats.cpp
     test_evaluate.cpp
+    test_recent_events.cpp
+    test_conditions.cpp
 )
 
 target_link_libraries(sim_tests

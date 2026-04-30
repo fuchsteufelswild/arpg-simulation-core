@@ -3,6 +3,8 @@ add_library(sim STATIC
     src/world.cpp
     src/entity_stats.cpp
     src/evaluate.cpp
+    src/recent_events.cpp
+    src/conditions.cpp
 )
 
 target_include_directories(sim

@@ -1,14 +1,23 @@
 #include "sim/evaluate.hpp"
 
+#include "sim/conditions.hpp"
 #include "sim/entity_stats.hpp"
 #include "sim/modifier.hpp"
+#include "sim/world.hpp"
 
 namespace sim {
 
 namespace {
 
-[[nodiscard]] bool modifier_applies(const Modifier& mod, const EvalContext& ctx) noexcept {
-    return tags_match(mod.required_tags, ctx.ability_tags);
+[[nodiscard]] bool
+modifier_applies(const Modifier& mod, const World& world, const EvalContext& ctx) noexcept {
+    if (!tags_match(mod.required_tags, ctx.ability_tags)) {
+        return false;
+    }
+    if (!evaluate_condition(mod.condition, mod.condition_param, world, ctx)) {
+        return false;
+    }
+    return true;
 }
 
 struct AccumulatedTerms {
@@ -33,11 +42,14 @@ void apply_modifier(AccumulatedTerms& terms, const Modifier& mod) noexcept {
 
 }  // namespace
 
-SimFloat evaluate_stat(const EntityStats& stats, StatId stat, const EvalContext& ctx) noexcept {
+SimFloat evaluate_stat(const World& world,
+                       const EntityStats& stats,
+                       StatId stat,
+                       const EvalContext& ctx) noexcept {
     AccumulatedTerms terms;
 
     for (const Modifier& mod : stats.primary_modifiers(stat)) {
-        if (!modifier_applies(mod, ctx)) {
+        if (!modifier_applies(mod, world, ctx)) {
             continue;
         }
         apply_modifier(terms, mod);
