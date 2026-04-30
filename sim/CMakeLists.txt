@@ -2,6 +2,7 @@ add_library(sim STATIC
     src/version.cpp
     src/world.cpp
     src/entity_stats.cpp
+    src/evaluate.cpp
 )
 
 target_include_directories(sim
