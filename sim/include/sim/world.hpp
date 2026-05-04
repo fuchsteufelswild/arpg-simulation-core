@@ -1,6 +1,7 @@
 #pragma once
 
 #include "sim/entity_handle.hpp"
+#include "sim/entity_stats.hpp"
 #include "sim/recent_events.hpp"
 
 #include <cstdint>
@@ -43,6 +44,8 @@ public:
     [[nodiscard]] Health& health(EntityHandle handle) noexcept;
     [[nodiscard]] const Health& health(EntityHandle handle) const noexcept;
     [[nodiscard]] EntityKind kind(EntityHandle handle) const noexcept;
+    [[nodiscard]] EntityStats& stats(EntityHandle handle) noexcept;
+    [[nodiscard]] const EntityStats& stats(EntityHandle handle) const noexcept;
     [[nodiscard]] RecentEvents& recent_events(EntityHandle handle) noexcept;
     [[nodiscard]] const RecentEvents& recent_events(EntityHandle handle) const noexcept;
 
@@ -56,6 +59,7 @@ private:
     std::vector<Transform> transforms_;
     std::vector<Health> healths_;
     std::vector<RecentEvents> recent_events_;
+    std::vector<EntityStats> stats_;
 
     std::vector<uint32_t> free_indices_;
 

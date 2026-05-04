@@ -7,6 +7,9 @@ add_library(sim STATIC
     src/conditions.cpp
     src/ability_registry.cpp
     src/ability_system.cpp
+    src/sim_commands.cpp
+    src/effect_execution.cpp
+    src/damage.cpp
 )
 
 target_include_directories(sim

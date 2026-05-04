@@ -14,6 +14,7 @@ EntityHandle World::spawn(EntityKind kind) noexcept {
         kinds_[index] = kind;
         transforms_[index] = {};
         healths_[index] = {};
+        stats_[index].clear();
         recent_events_[index].clear();
     } else {
         index = static_cast<uint32_t>(generations_.size());
@@ -21,6 +22,7 @@ EntityHandle World::spawn(EntityKind kind) noexcept {
         kinds_.push_back(kind);
         transforms_.emplace_back();
         healths_.emplace_back();
+        stats_.emplace_back();
         recent_events_.emplace_back();
     }
 
@@ -82,6 +84,16 @@ const Health& World::health(EntityHandle handle) const noexcept {
 EntityKind World::kind(EntityHandle handle) const noexcept {
     assert(is_alive(handle) && "kind() called with stale handle");
     return kinds_[handle.index];
+}
+
+EntityStats& World::stats(EntityHandle handle) noexcept {
+    assert(is_alive(handle) && "stats() called with stale handle");
+    return stats_[handle.index];
+}
+
+const EntityStats& World::stats(EntityHandle handle) const noexcept {
+    assert(is_alive(handle) && "stats() called with stale handle");
+    return stats_[handle.index];
 }
 
 RecentEvents& World::recent_events(EntityHandle handle) noexcept {
