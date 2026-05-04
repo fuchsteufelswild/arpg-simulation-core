@@ -5,6 +5,8 @@ add_library(sim STATIC
     src/evaluate.cpp
     src/recent_events.cpp
     src/conditions.cpp
+    src/ability_registry.cpp
+    src/ability_system.cpp
 )
 
 target_include_directories(sim

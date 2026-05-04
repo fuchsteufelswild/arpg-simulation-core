@@ -9,6 +9,7 @@ add_executable(sim_tests
     test_recent_events.cpp
     test_conditions.cpp
     test_meta_modifiers.cpp
+    test_ability_data.cpp
 )
 
 target_link_libraries(sim_tests
