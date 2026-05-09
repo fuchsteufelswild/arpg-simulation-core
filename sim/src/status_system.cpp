@@ -51,7 +51,7 @@ void process_dot_tick(StatusInstance& status,
 void update_statuses(World& world, SimCommands& commands, uint64_t current_tick) {
     for (uint32_t i = 0; i < world.capacity(); ++i) {
         const EntityHandle handle = world.handle_at(i);
-        if (!world.is_alive(handle)) {
+        if (!world.is_slot_alive(i)) {
             continue;
         }
 

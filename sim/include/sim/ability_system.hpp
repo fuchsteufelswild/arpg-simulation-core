@@ -2,6 +2,7 @@
 
 #include "sim/ability_instance.hpp"
 #include "sim/entity_handle.hpp"
+#include "sim/resolution_context.hpp"
 #include "sim/sim_float.hpp"
 
 #include <span>
@@ -12,6 +13,7 @@ namespace sim {
 class AbilityRegistry;
 class World;
 struct SimCommands;
+class SpatialGrid;
 
 class AbilitySystem {
 public:
@@ -22,15 +24,9 @@ public:
               EntityHandle target,
               SimFloat target_x,
               SimFloat target_y,
-              const AbilityRegistry& registry,
-              World& world,
-              SimCommands& commands,
-              uint64_t current_tick);
+              const ResolutionContext& res);
 
-    void update(const AbilityRegistry& registry,
-                World& world,
-                SimCommands& commands,
-                uint64_t current_tick);
+    void update(const ResolutionContext& res);
 
     [[nodiscard]] std::span<const AbilityInstance> casting() const noexcept { return casting_; }
     [[nodiscard]] std::span<const AbilityInstance> traveling() const noexcept { return traveling_; }

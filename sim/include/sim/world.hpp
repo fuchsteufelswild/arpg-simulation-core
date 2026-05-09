@@ -34,6 +34,7 @@ public:
     void kill(EntityHandle handle) noexcept;
 
     [[nodiscard]] bool is_alive(EntityHandle handle) const noexcept;
+    [[nodiscard]] bool is_slot_alive(uint32_t index) const noexcept;
     [[nodiscard]] EntityHandle handle_at(uint32_t index) const noexcept;
 
     [[nodiscard]] uint32_t alive_count() const noexcept { return alive_count_; }

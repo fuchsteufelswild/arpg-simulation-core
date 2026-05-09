@@ -57,6 +57,7 @@ TEST_CASE("instant cast resolves immediately", "[ability_exec]") {
     AbilitySystem system;
     World world;
     SimCommands commands;
+    SpatialGrid grid;
 
     const AbilityId fireball = register_fireball(registry);
 
@@ -64,7 +65,15 @@ TEST_CASE("instant cast resolves immediately", "[ability_exec]") {
     auto target = world.spawn(EntityKind::Enemy);
     world.health(target) = Health{.current = 100.0f, .max = 100.0f};
 
-    system.cast(fireball, caster, target, 0.0f, 0.0f, registry, world, commands, 0);
+    const ResolutionContext ctx{
+        .world = &world,
+        .registry = &registry,
+        .grid = &grid,
+        .commands = &commands,
+        .current_tick = 0,
+    };
+
+    system.cast(fireball, caster, target, 0.0f, 0.0f, ctx);
     REQUIRE(system.total_active() == 0);
 
     REQUIRE(commands.deal_damage.size() == 1);
@@ -76,6 +85,7 @@ TEST_CASE("delayed cast resolves after cast time", "[ability_exec]") {
     AbilitySystem system;
     World world;
     SimCommands commands;
+    SpatialGrid grid;
 
     const AbilityId fireball = register_fireball(registry, 15);
 
@@ -83,14 +93,24 @@ TEST_CASE("delayed cast resolves after cast time", "[ability_exec]") {
     auto target = world.spawn(EntityKind::Enemy);
     world.health(target) = Health{.current = 100.0f, .max = 100.0f};
 
-    system.cast(fireball, caster, target, 0.0f, 0.0f, registry, world, commands, 0);
+    ResolutionContext ctx{
+        .world = &world,
+        .registry = &registry,
+        .grid = &grid,
+        .commands = &commands,
+        .current_tick = 0,
+    };
+
+    system.cast(fireball, caster, target, 0.0f, 0.0f, ctx);
     REQUIRE(system.casting().size() == 1);
 
-    system.update(registry, world, commands, 5);
+    ctx.current_tick = 5;
+    system.update(ctx);
     REQUIRE(system.casting().size() == 1);
     REQUIRE(commands.deal_damage.empty());
 
-    system.update(registry, world, commands, 15);
+    ctx.current_tick = 15;
+    system.update(ctx);
     REQUIRE(system.casting().empty());
     REQUIRE(commands.deal_damage.size() == 1);
 }
@@ -100,6 +120,7 @@ TEST_CASE("damage is queued, not applied directly", "[ability_exec]") {
     AbilitySystem system;
     World world;
     SimCommands commands;
+    SpatialGrid grid;
 
     const AbilityId fireball = register_fireball(registry);
 
@@ -107,7 +128,15 @@ TEST_CASE("damage is queued, not applied directly", "[ability_exec]") {
     auto target = world.spawn(EntityKind::Enemy);
     world.health(target) = Health{.current = 100.0f, .max = 100.0f};
 
-    system.cast(fireball, caster, target, 0.0f, 0.0f, registry, world, commands, 0);
+    const ResolutionContext ctx{
+        .world = &world,
+        .registry = &registry,
+        .grid = &grid,
+        .commands = &commands,
+        .current_tick = 0,
+    };
+
+    system.cast(fireball, caster, target, 0.0f, 0.0f, ctx);
 
     REQUIRE(world.health(target).current == 100.0f);
     REQUIRE(commands.deal_damage.size() == 1);
@@ -121,6 +150,7 @@ TEST_CASE("damage scales with caster modifiers", "[ability_exec]") {
     AbilitySystem system;
     World world;
     SimCommands commands;
+    SpatialGrid grid;
 
     const AbilityId fireball = register_fireball(registry, 0, 40.0f);
 
@@ -135,7 +165,15 @@ TEST_CASE("damage scales with caster modifiers", "[ability_exec]") {
         .source = make_source_id(source_categories::Gear, 1),
     });
 
-    system.cast(fireball, caster, target, 0.0f, 0.0f, registry, world, commands, 0);
+    const ResolutionContext ctx{
+        .world = &world,
+        .registry = &registry,
+        .grid = &grid,
+        .commands = &commands,
+        .current_tick = 0,
+    };
+
+    system.cast(fireball, caster, target, 0.0f, 0.0f, ctx);
 
     REQUIRE(commands.deal_damage.size() == 1);
     REQUIRE_THAT(commands.deal_damage[0].amount, WithinAbs(40.0f, Tolerance));
@@ -146,6 +184,7 @@ TEST_CASE("damage queued from caster modifier of damage stat", "[ability_exec]")
     AbilitySystem system;
     World world;
     SimCommands commands;
+    SpatialGrid grid;
 
     AbilityDefinition def{
         .name = "Fireball",
@@ -175,7 +214,15 @@ TEST_CASE("damage queued from caster modifier of damage stat", "[ability_exec]")
         .source = make_source_id(source_categories::Gear, 2),
     });
 
-    system.cast(fireball, caster, target, 0.0f, 0.0f, registry, world, commands, 0);
+    const ResolutionContext ctx{
+        .world = &world,
+        .registry = &registry,
+        .grid = &grid,
+        .commands = &commands,
+        .current_tick = 0,
+    };
+
+    system.cast(fireball, caster, target, 0.0f, 0.0f, ctx);
 
     REQUIRE(commands.deal_damage.size() == 1);
     REQUIRE_THAT(commands.deal_damage[0].amount, WithinAbs(75.0f, Tolerance));
@@ -186,6 +233,7 @@ TEST_CASE("dead target before resolution: damage skipped", "[ability_exec]") {
     AbilitySystem system;
     World world;
     SimCommands commands;
+    SpatialGrid grid;
 
     const AbilityId fireball = register_fireball(registry, 15);
 
@@ -193,10 +241,19 @@ TEST_CASE("dead target before resolution: damage skipped", "[ability_exec]") {
     auto target = world.spawn(EntityKind::Enemy);
     world.health(target) = Health{.current = 100.0f, .max = 100.0f};
 
-    system.cast(fireball, caster, target, 0.0f, 0.0f, registry, world, commands, 0);
+    ResolutionContext ctx{
+        .world = &world,
+        .registry = &registry,
+        .grid = &grid,
+        .commands = &commands,
+        .current_tick = 0,
+    };
+
+    system.cast(fireball, caster, target, 0.0f, 0.0f, ctx);
     world.kill(target);
 
-    system.update(registry, world, commands, 15);
+    ctx.current_tick = 15;
+    system.update(ctx);
     REQUIRE(commands.deal_damage.empty());
 }
 
@@ -205,6 +262,7 @@ TEST_CASE("damage to zero queues kill command", "[ability_exec]") {
     AbilitySystem system;
     World world;
     SimCommands commands;
+    SpatialGrid grid;
 
     const AbilityId fireball = register_fireball(registry, 0, 200.0f);
 
@@ -212,7 +270,15 @@ TEST_CASE("damage to zero queues kill command", "[ability_exec]") {
     auto target = world.spawn(EntityKind::Enemy);
     world.health(target) = Health{.current = 100.0f, .max = 100.0f};
 
-    system.cast(fireball, caster, target, 0.0f, 0.0f, registry, world, commands, 0);
+    const ResolutionContext ctx{
+        .world = &world,
+        .registry = &registry,
+        .grid = &grid,
+        .commands = &commands,
+        .current_tick = 0,
+    };
+
+    system.cast(fireball, caster, target, 0.0f, 0.0f, ctx);
     apply_all_commands(commands, world);
 
     REQUIRE_FALSE(world.is_alive(target));
@@ -223,6 +289,7 @@ TEST_CASE("two damage events same tick both apply", "[ability_exec]") {
     AbilitySystem system;
     World world;
     SimCommands commands;
+    SpatialGrid grid;
 
     const AbilityId fireball = register_fireball(registry, 0, 30.0f);
 
@@ -230,8 +297,16 @@ TEST_CASE("two damage events same tick both apply", "[ability_exec]") {
     auto target = world.spawn(EntityKind::Enemy);
     world.health(target) = Health{.current = 100.0f, .max = 100.0f};
 
-    system.cast(fireball, caster, target, 0.0f, 0.0f, registry, world, commands, 0);
-    system.cast(fireball, caster, target, 0.0f, 0.0f, registry, world, commands, 0);
+    const ResolutionContext ctx{
+        .world = &world,
+        .registry = &registry,
+        .grid = &grid,
+        .commands = &commands,
+        .current_tick = 0,
+    };
+
+    system.cast(fireball, caster, target, 0.0f, 0.0f, ctx);
+    system.cast(fireball, caster, target, 0.0f, 0.0f, ctx);
 
     REQUIRE(commands.deal_damage.size() == 2);
     apply_all_commands(commands, world);
@@ -243,11 +318,20 @@ TEST_CASE("unknown ability id silently does nothing", "[ability_exec]") {
     AbilitySystem system;
     World world;
     SimCommands commands;
+    SpatialGrid grid;
 
     auto caster = world.spawn(EntityKind::Player);
     auto target = world.spawn(EntityKind::Enemy);
 
-    system.cast(999, caster, target, 0.0f, 0.0f, registry, world, commands, 0);
+    const ResolutionContext ctx{
+        .world = &world,
+        .registry = &registry,
+        .grid = &grid,
+        .commands = &commands,
+        .current_tick = 0,
+    };
+
+    system.cast(999, caster, target, 0.0f, 0.0f, ctx);
 
     REQUIRE(system.total_active() == 0);
     REQUIRE(commands.empty());
@@ -258,6 +342,7 @@ TEST_CASE("dead caster cannot cast", "[ability_exec]") {
     AbilitySystem system;
     World world;
     SimCommands commands;
+    SpatialGrid grid;
 
     const AbilityId fireball = register_fireball(registry);
 
@@ -265,7 +350,15 @@ TEST_CASE("dead caster cannot cast", "[ability_exec]") {
     auto target = world.spawn(EntityKind::Enemy);
     world.kill(caster);
 
-    system.cast(fireball, caster, target, 0.0f, 0.0f, registry, world, commands, 0);
+    const ResolutionContext ctx{
+        .world = &world,
+        .registry = &registry,
+        .grid = &grid,
+        .commands = &commands,
+        .current_tick = 0,
+    };
+
+    system.cast(fireball, caster, target, 0.0f, 0.0f, ctx);
 
     REQUIRE(commands.empty());
 }

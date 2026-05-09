@@ -12,6 +12,7 @@ add_library(sim STATIC
     src/damage.cpp
     src/status_list.cpp
     src/status_system.cpp
+    src/spatial_grid.cpp
 )
 
 target_include_directories(sim

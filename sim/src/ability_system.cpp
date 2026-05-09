@@ -5,7 +5,7 @@
 #include "sim/effect_context.hpp"
 #include "sim/effect_execution.hpp"
 #include "sim/entity_stats.hpp"
-#include "sim/sim_commands.hpp"
+#include "sim/spatial_grid.hpp"
 #include "sim/util/overload.hpp"
 #include "sim/world.hpp"
 
@@ -27,34 +27,37 @@ namespace {
 
 void resolve_instance(const AbilityInstance& instance,
                       const AbilityDefinition& def,
-                      World& world,
-                      SimCommands& commands,
-                      uint64_t current_tick) {
-    if (!world.is_alive(instance.caster)) {
+                      const ResolutionContext& res) {
+    if (res.world == nullptr || res.commands == nullptr) {
         return;
     }
-    const EntityStats& caster_stats = world.stats(instance.caster);
+
+    if (!res.world->is_alive(instance.caster)) {
+        return;
+    }
+    const EntityStats& caster_stats = res.world->stats(instance.caster);
 
     EffectContext ctx{
         .definition = &def,
         .instance = &instance,
         .current_target = instance.initial_target,
-        .world = &world,
+        .world = res.world,
         .caster_stats = &caster_stats,
         .target_stats = nullptr,
-        .commands = &commands,
-        .current_tick = current_tick,
+        .commands = res.commands,
+        .current_tick = res.current_tick,
+        .grid = res.grid,
     };
 
-    if (world.is_alive(instance.initial_target)) {
-        ctx.target_stats = &world.stats(instance.initial_target);
+    if (res.world->is_alive(instance.initial_target)) {
+        ctx.target_stats = &res.world->stats(instance.initial_target);
     }
 
     for (const Effect& effect : def.effects) {
         std::visit(util::Overload{
                        [&](const DamageEffect& d) { execute_damage_effect(d, ctx); },
                        [&](const ApplyStatusEffect& s) { execute_apply_status_effect(s, ctx); },
-                       [&](const ChainEffect&) {},
+                       [&](const ChainEffect& c) { execute_chain_effect(c, ctx); },
                        [&](const TriggerEffect&) {},
                    },
                    effect);
@@ -84,27 +87,27 @@ void AbilitySystem::cast(AbilityId ability_id,
                          EntityHandle target,
                          SimFloat target_x,
                          SimFloat target_y,
-                         const AbilityRegistry& registry,
-                         World& world,
-                         SimCommands& commands,
-                         uint64_t current_tick) {
-    const AbilityDefinition* def = registry.find(ability_id);
+                         const ResolutionContext& res) {
+    if (res.registry == nullptr || res.world == nullptr) {
+        return;
+    }
+    const AbilityDefinition* def = res.registry->find(ability_id);
     if (def == nullptr) {
         return;
     }
-    if (!world.is_alive(caster)) {
+    if (!res.world->is_alive(caster)) {
         return;
     }
 
-    const Transform& origin = world.transform(caster);
+    const Transform& origin = res.world->transform(caster);
 
     AbilityInstance instance{
         .definition_id = ability_id,
         .phase = initial_phase(*def),
         .caster = caster,
         .initial_target = target,
-        .start_tick = current_tick,
-        .resolve_tick = current_tick + def->cast_time_ticks,
+        .start_tick = res.current_tick,
+        .resolve_tick = res.current_tick + def->cast_time_ticks,
         .origin_x = origin.x,
         .origin_y = origin.y,
         .target_x = target_x,
@@ -114,18 +117,20 @@ void AbilitySystem::cast(AbilityId ability_id,
     };
 
     if (instance.phase == AbilityPhase::Resolving) {
-        resolve_instance(instance, *def, world, commands, current_tick);
+        resolve_instance(instance, *def, res);
         return;
     }
 
     add(instance);
 }
 
-void AbilitySystem::update(const AbilityRegistry& registry,
-                           World& world,
-                           SimCommands& commands,
-                           uint64_t current_tick) {
+void AbilitySystem::update(const ResolutionContext& res) {
+    if (res.registry == nullptr) {
+        return;
+    }
+
     std::vector<AbilityInstance> to_resolve;
+    const uint64_t current_tick = res.current_tick;
 
     for (const AbilityInstance& inst : casting_) {
         if (current_tick >= inst.resolve_tick) {
@@ -138,11 +143,11 @@ void AbilitySystem::update(const AbilityRegistry& registry,
     });
 
     for (const AbilityInstance& inst : to_resolve) {
-        const AbilityDefinition* def = registry.find(inst.definition_id);
+        const AbilityDefinition* def = res.registry->find(inst.definition_id);
         if (def == nullptr) {
             continue;
         }
-        resolve_instance(inst, *def, world, commands, current_tick);
+        resolve_instance(inst, *def, res);
     }
 }
 

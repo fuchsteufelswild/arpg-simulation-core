@@ -70,6 +70,13 @@ EntityHandle World::handle_at(uint32_t index) const noexcept {
     return EntityHandle{.index = index, .generation = generations_[index]};
 }
 
+bool World::is_slot_alive(uint32_t index) const noexcept {
+    if (index >= generations_.size()) {
+        return false;
+    }
+    return std::ranges::find(free_indices_, index) == free_indices_.end();
+}
+
 Transform& World::transform(EntityHandle handle) noexcept {
     assert(is_alive(handle) && "transform() called with stale handle");
     return transforms_[handle.index];

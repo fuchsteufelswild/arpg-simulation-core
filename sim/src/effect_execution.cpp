@@ -6,6 +6,7 @@
 #include "sim/eval_context.hpp"
 #include "sim/evaluate.hpp"
 #include "sim/sim_commands.hpp"
+#include "sim/spatial_grid.hpp"
 #include "sim/world.hpp"
 
 namespace sim {
@@ -94,6 +95,91 @@ void execute_apply_status_effect(const ApplyStatusEffect& effect, EffectContext&
     };
 
     ctx.world->status_list(ctx.current_target).add(status);
+}
+
+void execute_chain_effect(const ChainEffect& effect, EffectContext& ctx) {
+    if (ctx.world == nullptr || ctx.commands == nullptr || ctx.grid == nullptr) {
+        return;
+    }
+    if (ctx.instance == nullptr || ctx.definition == nullptr || ctx.caster_stats == nullptr) {
+        return;
+    }
+    if (effect.max_chains == 0 || effect.radius <= 0.0f) {
+        return;
+    }
+    if (!ctx.world->is_alive(ctx.current_target)) {
+        return;
+    }
+
+    std::vector<EntityHandle> hit_targets;
+    hit_targets.push_back(ctx.current_target);
+
+    EntityHandle chain_origin = ctx.current_target;
+    SimFloat damage_multiplier = effect.falloff;
+
+    for (uint8_t hop = 0; hop < effect.max_chains; ++hop) {
+        if (!ctx.world->is_alive(chain_origin)) {
+            break;
+        }
+
+        const Transform& origin_transform = ctx.world->transform(chain_origin);
+        const std::vector<EntityHandle> candidates =
+            ctx.grid->query_within(origin_transform.x, origin_transform.y, effect.radius);
+
+        EntityHandle next_target;
+        for (const EntityHandle& candidate : candidates) {
+            if (candidate == ctx.instance->caster) {
+                continue;
+            }
+            if (!ctx.world->is_alive(candidate)) {
+                continue;
+            }
+            const auto already_hit = std::ranges::find(hit_targets, candidate);
+            if (already_hit != hit_targets.end()) {
+                continue;
+            }
+            next_target = candidate;
+            break;
+        }
+
+        if (next_target.is_null()) {
+            break;
+        }
+
+        for (const Effect& other : ctx.definition->effects) {
+            if (!std::holds_alternative<DamageEffect>(other)) {
+                continue;
+            }
+            const DamageEffect& dmg = std::get<DamageEffect>(other);
+
+            const EvalContext eval{
+                .attacker = ctx.instance->caster,
+                .target = next_target,
+                .ability_tags = ctx.definition->tags,
+                .target_tags = ctx.world->status_list(next_target).combined_tags(),
+                .current_tick = ctx.current_tick,
+            };
+
+            const SimFloat from_modifiers =
+                evaluate_stat(*ctx.world, *ctx.caster_stats, dmg.damage_stat, eval);
+            const SimFloat total = (dmg.base_amount + from_modifiers) * damage_multiplier;
+
+            if (total <= 0.0f) {
+                continue;
+            }
+
+            ctx.commands->deal_damage.push_back(DealDamageCommand{
+                .attacker = ctx.instance->caster,
+                .target = next_target,
+                .amount = total,
+                .ability_tags = ctx.definition->tags,
+            });
+        }
+
+        hit_targets.push_back(next_target);
+        chain_origin = next_target;
+        damage_multiplier *= effect.falloff;
+    }
 }
 
 }  // namespace sim

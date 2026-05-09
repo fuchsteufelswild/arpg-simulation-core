@@ -12,6 +12,8 @@ add_executable(sim_tests
     test_ability_data.cpp
     test_ability_execution.cpp
     test_status.cpp
+    test_spatial_grid.cpp
+    test_chain_effect.cpp
 )
 
 target_link_libraries(sim_tests
