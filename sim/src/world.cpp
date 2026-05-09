@@ -16,6 +16,7 @@ EntityHandle World::spawn(EntityKind kind) noexcept {
         healths_[index] = {};
         stats_[index].clear();
         recent_events_[index].clear();
+        status_lists_[index].clear();
     } else {
         index = static_cast<uint32_t>(generations_.size());
         generations_.push_back(1);
@@ -24,6 +25,7 @@ EntityHandle World::spawn(EntityKind kind) noexcept {
         healths_.emplace_back();
         stats_.emplace_back();
         recent_events_.emplace_back();
+        status_lists_.emplace_back();
     }
 
     ++alive_count_;
@@ -59,6 +61,13 @@ bool World::is_alive(EntityHandle handle) const noexcept {
         return false;
     }
     return generations_[handle.index] == handle.generation;
+}
+
+EntityHandle World::handle_at(uint32_t index) const noexcept {
+    if (index >= generations_.size()) {
+        return {};
+    }
+    return EntityHandle{.index = index, .generation = generations_[index]};
 }
 
 Transform& World::transform(EntityHandle handle) noexcept {
@@ -104,6 +113,16 @@ RecentEvents& World::recent_events(EntityHandle handle) noexcept {
 const RecentEvents& World::recent_events(EntityHandle handle) const noexcept {
     assert(is_alive(handle) && "recent_events() called with stale handle");
     return recent_events_[handle.index];
+}
+
+StatusList& World::status_list(EntityHandle handle) noexcept {
+    assert(is_alive(handle) && "status_list() called with stale handle");
+    return status_lists_[handle.index];
+}
+
+const StatusList& World::status_list(EntityHandle handle) const noexcept {
+    assert(is_alive(handle) && "status_list() called with stale handle");
+    return status_lists_[handle.index];
 }
 
 }  // namespace sim

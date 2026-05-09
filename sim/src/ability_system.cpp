@@ -53,7 +53,7 @@ void resolve_instance(const AbilityInstance& instance,
     for (const Effect& effect : def.effects) {
         std::visit(util::Overload{
                        [&](const DamageEffect& d) { execute_damage_effect(d, ctx); },
-                       [&](const ApplyStatusEffect&) {},
+                       [&](const ApplyStatusEffect& s) { execute_apply_status_effect(s, ctx); },
                        [&](const ChainEffect&) {},
                        [&](const TriggerEffect&) {},
                    },

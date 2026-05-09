@@ -10,6 +10,26 @@
 
 namespace sim {
 
+namespace {
+
+[[nodiscard]] StatusPayload payload_for(StatusType type, SimFloat magnitude) noexcept {
+    switch (type) {
+    case StatusType::Chill:
+        return ChillData{.slow_amount = magnitude};
+    case StatusType::Ignite:
+        return IgniteData{.damage_per_tick = magnitude};
+    case StatusType::Poison:
+        return PoisonData{.damage_per_tick = magnitude};
+    case StatusType::Stun:
+        return StunData{};
+    case StatusType::None:
+        return ChillData{};
+    }
+    return ChillData{};
+}
+
+}  // namespace
+
 void execute_damage_effect(const DamageEffect& effect, EffectContext& ctx) {
     if (ctx.world == nullptr || ctx.commands == nullptr) {
         return;
@@ -24,11 +44,15 @@ void execute_damage_effect(const DamageEffect& effect, EffectContext& ctx) {
         return;
     }
 
+    const TagMask target_tags = (ctx.world != nullptr && ctx.world->is_alive(ctx.current_target))
+                                    ? ctx.world->status_list(ctx.current_target).combined_tags()
+                                    : tags::None;
+
     const EvalContext eval{
         .attacker = ctx.instance->caster,
         .target = ctx.current_target,
         .ability_tags = ctx.definition->tags,
-        .target_tags = tags::None,
+        .target_tags = target_tags,
         .current_tick = ctx.current_tick,
     };
 
@@ -46,6 +70,30 @@ void execute_damage_effect(const DamageEffect& effect, EffectContext& ctx) {
         .amount = total,
         .ability_tags = ctx.definition->tags,
     });
+}
+
+void execute_apply_status_effect(const ApplyStatusEffect& effect, EffectContext& ctx) {
+    if (ctx.world == nullptr || ctx.instance == nullptr) {
+        return;
+    }
+    if (!ctx.world->is_alive(ctx.current_target)) {
+        return;
+    }
+    if (effect.status == StatusType::None) {
+        return;
+    }
+
+    StatusInstance status{
+        .type = effect.status,
+        .source = make_source_id(source_categories::Status, static_cast<uint16_t>(effect.status)),
+        .applier = ctx.instance->caster,
+        .apply_tick = ctx.current_tick,
+        .expire_tick = ctx.current_tick + effect.duration_ticks,
+        .last_tick_processed = ctx.current_tick,
+        .payload = payload_for(effect.status, effect.magnitude),
+    };
+
+    ctx.world->status_list(ctx.current_target).add(status);
 }
 
 }  // namespace sim

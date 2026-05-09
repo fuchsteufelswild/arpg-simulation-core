@@ -11,6 +11,7 @@ add_executable(sim_tests
     test_meta_modifiers.cpp
     test_ability_data.cpp
     test_ability_execution.cpp
+    test_status.cpp
 )
 
 target_link_libraries(sim_tests

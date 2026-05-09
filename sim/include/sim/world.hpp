@@ -3,6 +3,7 @@
 #include "sim/entity_handle.hpp"
 #include "sim/entity_stats.hpp"
 #include "sim/recent_events.hpp"
+#include "sim/status_list.hpp"
 
 #include <cstdint>
 #include <vector>
@@ -33,6 +34,7 @@ public:
     void kill(EntityHandle handle) noexcept;
 
     [[nodiscard]] bool is_alive(EntityHandle handle) const noexcept;
+    [[nodiscard]] EntityHandle handle_at(uint32_t index) const noexcept;
 
     [[nodiscard]] uint32_t alive_count() const noexcept { return alive_count_; }
     [[nodiscard]] uint32_t capacity() const noexcept {
@@ -48,6 +50,8 @@ public:
     [[nodiscard]] const EntityStats& stats(EntityHandle handle) const noexcept;
     [[nodiscard]] RecentEvents& recent_events(EntityHandle handle) noexcept;
     [[nodiscard]] const RecentEvents& recent_events(EntityHandle handle) const noexcept;
+    [[nodiscard]] StatusList& status_list(EntityHandle handle) noexcept;
+    [[nodiscard]] const StatusList& status_list(EntityHandle handle) const noexcept;
 
 private:
     [[nodiscard]] bool index_in_bounds(uint32_t index) const noexcept {
@@ -60,6 +64,7 @@ private:
     std::vector<Health> healths_;
     std::vector<RecentEvents> recent_events_;
     std::vector<EntityStats> stats_;
+    std::vector<StatusList> status_lists_;
 
     std::vector<uint32_t> free_indices_;
 

@@ -10,6 +10,8 @@ add_library(sim STATIC
     src/sim_commands.cpp
     src/effect_execution.cpp
     src/damage.cpp
+    src/status_list.cpp
+    src/status_system.cpp
 )
 
 target_include_directories(sim
