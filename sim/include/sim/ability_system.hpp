@@ -39,6 +39,9 @@ public:
     void clear() noexcept;
 
 private:
+    void advance_casting(const ResolutionContext& res);
+    void advance_traveling(const ResolutionContext& res);
+
     std::vector<AbilityInstance> casting_;
     std::vector<AbilityInstance> traveling_;
     std::vector<AbilityInstance> resolving_;

@@ -13,6 +13,7 @@ add_library(sim STATIC
     src/status_list.cpp
     src/status_system.cpp
     src/spatial_grid.cpp
+    src/command_application.cpp
 )
 
 target_include_directories(sim

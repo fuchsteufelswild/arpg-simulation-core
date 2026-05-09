@@ -58,7 +58,7 @@ void resolve_instance(const AbilityInstance& instance,
                        [&](const DamageEffect& d) { execute_damage_effect(d, ctx); },
                        [&](const ApplyStatusEffect& s) { execute_apply_status_effect(s, ctx); },
                        [&](const ChainEffect& c) { execute_chain_effect(c, ctx); },
-                       [&](const TriggerEffect&) {},
+                       [&](const TriggerEffect& t) { execute_trigger_effect(t, ctx); },
                    },
                    effect);
     }
@@ -129,20 +129,68 @@ void AbilitySystem::update(const ResolutionContext& res) {
         return;
     }
 
-    std::vector<AbilityInstance> to_resolve;
+    advance_casting(res);
+    advance_traveling(res);
+}
+
+void AbilitySystem::advance_casting(const ResolutionContext& res) {
     const uint64_t current_tick = res.current_tick;
 
+    std::vector<AbilityInstance> ready;
     for (const AbilityInstance& inst : casting_) {
         if (current_tick >= inst.resolve_tick) {
-            to_resolve.push_back(inst);
+            ready.push_back(inst);
         }
     }
-
     std::erase_if(casting_, [current_tick](const AbilityInstance& inst) {
         return current_tick >= inst.resolve_tick;
     });
 
-    for (const AbilityInstance& inst : to_resolve) {
+    for (AbilityInstance& inst : ready) {
+        const AbilityDefinition* def = res.registry->find(inst.definition_id);
+        if (def == nullptr) {
+            continue;
+        }
+        if (def->travel_speed > 0.0f) {
+            inst.phase = AbilityPhase::Traveling;
+            traveling_.push_back(inst);
+        } else {
+            resolve_instance(inst, *def, res);
+        }
+    }
+}
+
+void AbilitySystem::advance_traveling(const ResolutionContext& res) {
+    std::vector<AbilityInstance> arrived;
+    std::vector<AbilityInstance> still_flying;
+    still_flying.reserve(traveling_.size());
+
+    for (AbilityInstance& inst : traveling_) {
+        const AbilityDefinition* def = res.registry->find(inst.definition_id);
+        if (def == nullptr) {
+            continue;
+        }
+
+        const SimFloat dx = inst.target_x - inst.current_x;
+        const SimFloat dy = inst.target_y - inst.current_y;
+        const SimFloat dist_sq = (dx * dx) + (dy * dy);
+        const SimFloat step_sq = def->travel_speed * def->travel_speed;
+
+        if (dist_sq <= step_sq) {
+            inst.current_x = inst.target_x;
+            inst.current_y = inst.target_y;
+            arrived.push_back(inst);
+        } else {
+            const SimFloat dist = std::sqrt(dist_sq);
+            inst.current_x += dx / dist * def->travel_speed;
+            inst.current_y += dy / dist * def->travel_speed;
+            still_flying.push_back(inst);
+        }
+    }
+
+    traveling_ = std::move(still_flying);
+
+    for (const AbilityInstance& inst : arrived) {
         const AbilityDefinition* def = res.registry->find(inst.definition_id);
         if (def == nullptr) {
             continue;

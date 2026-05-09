@@ -14,6 +14,8 @@ add_executable(sim_tests
     test_status.cpp
     test_spatial_grid.cpp
     test_chain_effect.cpp
+    test_trigger_effect.cpp
+    test_projectile_travel.cpp
 )
 
 target_link_libraries(sim_tests

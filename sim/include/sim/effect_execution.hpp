@@ -11,5 +11,6 @@ struct ChainEffect;
 void execute_damage_effect(const DamageEffect& effect, EffectContext& ctx);
 void execute_apply_status_effect(const ApplyStatusEffect& effect, EffectContext& ctx);
 void execute_chain_effect(const ChainEffect& effect, EffectContext& ctx);
+void execute_trigger_effect(const TriggerEffect& effect, EffectContext& ctx);
 
 }  // namespace sim

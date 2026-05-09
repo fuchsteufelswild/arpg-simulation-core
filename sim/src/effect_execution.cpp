@@ -150,7 +150,7 @@ void execute_chain_effect(const ChainEffect& effect, EffectContext& ctx) {
             if (!std::holds_alternative<DamageEffect>(other)) {
                 continue;
             }
-            const DamageEffect& dmg = std::get<DamageEffect>(other);
+            const auto& dmg = std::get<DamageEffect>(other);
 
             const EvalContext eval{
                 .attacker = ctx.instance->caster,
@@ -180,6 +180,35 @@ void execute_chain_effect(const ChainEffect& effect, EffectContext& ctx) {
         chain_origin = next_target;
         damage_multiplier *= effect.falloff;
     }
+}
+
+void execute_trigger_effect(const TriggerEffect& effect, EffectContext& ctx) {
+    if (ctx.commands == nullptr || ctx.instance == nullptr) {
+        return;
+    }
+    if (effect.ability_to_trigger == NoAbility) {
+        return;
+    }
+    if (effect.chance < 1.0f) {
+        return;
+    }
+
+    SimFloat target_x = ctx.instance->target_x;
+    SimFloat target_y = ctx.instance->target_y;
+
+    if (ctx.world != nullptr && ctx.world->is_alive(ctx.current_target)) {
+        const Transform& t = ctx.world->transform(ctx.current_target);
+        target_x = t.x;
+        target_y = t.y;
+    }
+
+    ctx.commands->cast_ability.push_back(CastAbilityCommand{
+        .ability_id = effect.ability_to_trigger,
+        .caster = ctx.instance->caster,
+        .target = ctx.current_target,
+        .target_x = target_x,
+        .target_y = target_y,
+    });
 }
 
 }  // namespace sim
