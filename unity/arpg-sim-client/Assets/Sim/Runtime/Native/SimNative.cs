@@ -32,6 +32,9 @@ namespace Sim.Native
             uint entity_generation,
             out CooldownSnapshotNative out_snapshot);
 
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern ulong sim_debug_spawn_entity(IntPtr sim, ushort entityKind, float posX, float posY);
+
         public static SimSafeHandle Create(uint seed)
         {
             var ptr = sim_create(seed);

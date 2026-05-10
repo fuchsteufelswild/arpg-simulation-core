@@ -10,6 +10,18 @@ namespace Sim.Utils
             UnityEngine.Debug.Log(message);
         }
 
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        public static void Warning(string message)
+        {
+            UnityEngine.Debug.LogWarning(message);
+        }
+
+        [Conditional("UNITY_EDITOR"), Conditional("DEVELOPMENT_BUILD")]
+        public static void Error(string message)
+        {
+            UnityEngine.Debug.LogError(message);
+        }
+
         [Conditional("UNITY_EDITOR")]
         public static void Verbose(string message)
         {
