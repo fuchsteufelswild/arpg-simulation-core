@@ -26,6 +26,14 @@ static_assert(std::is_standard_layout_v<Snapshot>);
 static_assert(std::is_trivially_copyable_v<Snapshot>);
 static_assert(sizeof(Snapshot) == 48);
 
+static_assert(std::is_standard_layout_v<CooldownEntry>);
+static_assert(std::is_trivially_copyable_v<CooldownEntry>);
+static_assert(sizeof(CooldownEntry) == 8);
+
+static_assert(std::is_standard_layout_v<CooldownSnapshot>);
+static_assert(std::is_trivially_copyable_v<CooldownSnapshot>);
+static_assert(sizeof(CooldownSnapshot) == 24);
+
 static_assert(std::is_standard_layout_v<CastAbilityCmd>);
 static_assert(std::is_trivially_copyable_v<CastAbilityCmd>);
 static_assert(sizeof(CastAbilityCmd) == 28);

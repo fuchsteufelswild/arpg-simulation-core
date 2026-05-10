@@ -96,6 +96,31 @@ void rebuild_snapshot(sim_api::SimOpaque& opaque) {
     }
 }
 
+void rebuild_cooldowns(sim_api::SimOpaque& opaque, uint32_t index, uint32_t gen) {
+    opaque.cooldown_buffer.clear();
+
+    const sim::World& world = opaque.sim.world();
+    sim::EntityHandle handle{.index = index, .generation = static_cast<uint16_t>(gen)};
+
+    if (!world.is_alive(handle)) {
+        return;
+    }
+
+    const sim::CooldownList& cooldown_list = opaque.sim.world().cooldowns(handle);
+
+    for (const auto& [ability_id, end_tick] : cooldown_list.all()) {
+        const uint64_t current = opaque.sim.current_tick();
+
+        CooldownEntry entry{};
+        entry.ability_id = static_cast<uint16_t>(ability_id);
+
+        const uint64_t remaining = end_tick - current;
+        entry.remaining_ticks = (end_tick > current) ? static_cast<uint32_t>(remaining) : 0u;
+
+        opaque.cooldown_buffer.push_back(entry);
+    }
+}
+
 [[nodiscard]] sim::InputCommand convert(const InputCmd& c) noexcept {
     switch (c.type) {
     case SIM_CMD_CAST_ABILITY:
@@ -222,4 +247,33 @@ extern "C" SIM_API void sim_get_snapshot(SimHandle sim, Snapshot* out_snapshot) 
     out_snapshot->damage_events = opaque->damage_event_buffer.data();
     out_snapshot->projectile_count = static_cast<uint32_t>(opaque->projectile_buffer.size());
     out_snapshot->damage_event_count = static_cast<uint32_t>(opaque->damage_event_buffer.size());
+}
+
+extern "C" SIM_API void sim_get_cooldowns(SimHandle sim,
+                                          uint32_t entity_index,
+                                          uint32_t entity_generation,
+                                          CooldownSnapshot* out_snapshot) {
+    if (out_snapshot == nullptr) {
+        return;
+    }
+    auto* opaque = unwrap(sim);
+    if (opaque == nullptr) {
+        out_snapshot->entity_index = 0;
+        out_snapshot->entity_generation = 0;
+        out_snapshot->count = 0;
+        out_snapshot->pad0 = 0;
+        out_snapshot->entries = nullptr;
+        return;
+    }
+
+    try {
+        rebuild_cooldowns(*opaque, entity_index, entity_generation);
+    } catch (...) {
+    }
+
+    out_snapshot->entity_index = entity_index;
+    out_snapshot->entity_generation = entity_generation;
+    out_snapshot->count = static_cast<uint32_t>(opaque->cooldown_buffer.size());
+    out_snapshot->pad0 = 0;
+    out_snapshot->entries = opaque->cooldown_buffer.data();
 }

@@ -100,6 +100,20 @@ typedef struct InputCmdBuffer {
     const InputCmd* commands;
 } InputCmdBuffer;
 
+typedef struct CooldownEntry {
+    uint16_t ability_id;
+    uint16_t pad0;
+    uint32_t remaining_ticks;
+} CooldownEntry;
+
+typedef struct CooldownSnapshot {
+    uint32_t entity_index;
+    uint32_t entity_generation;
+    uint32_t count;
+    uint32_t pad0;
+    const CooldownEntry* entries;
+} CooldownSnapshot;
+
 SIM_API const char* sim_version(void);
 
 SIM_API SimHandle sim_create(uint32_t seed);
@@ -111,6 +125,13 @@ SIM_API void sim_advance(SimHandle sim, uint64_t target_tick);
 SIM_API void sim_submit_commands(SimHandle sim, const InputCmdBuffer* commands);
 
 SIM_API void sim_get_snapshot(SimHandle sim, Snapshot* out_snapshot);
+
+// The returned entries pointer is valid only until the next call to
+// sim_get_cooldowns or any other sim_* function. Copy immediately.
+SIM_API void sim_get_cooldowns(SimHandle sim,
+                               uint32_t entity_index,
+                               uint32_t entity_generation,
+                               CooldownSnapshot* out_snapshot);
 
 #ifdef __cplusplus
 }

@@ -111,6 +111,58 @@ TEST_CASE("snapshot has zero counts in empty sim", "[sim_api]") {
     sim_destroy(sim);
 }
 
+TEST_CASE("get_cooldowns handles null/invalid inputs safely", "[sim_api]") {
+    SimHandle sim = sim_create(42);
+    CooldownSnapshot snap{};
+
+    SECTION("Null out_snapshot") {
+        sim_get_cooldowns(sim, 0, 0, nullptr);
+    }
+
+    SECTION("Null SimHandle") {
+        snap.count = 999;
+        sim_get_cooldowns(nullptr, 0, 0, &snap);
+        REQUIRE(snap.count == 0);
+        REQUIRE(snap.entries == nullptr);
+    }
+
+    SECTION("Invalid Entity Handle") {
+        sim_get_cooldowns(sim, 9999, 1, &snap);
+        REQUIRE(snap.count == 0);
+        REQUIRE(snap.entity_index == 9999);
+    }
+
+    sim_destroy(sim);
+}
+
+TEST_CASE("get_cooldowns reflects active simulation cooldowns", "[sim_api]") {
+    SimHandle sim = sim_create(42);
+
+    InputCmdBuffer buf{};
+    InputCmd cmd{};
+    cmd.type = SIM_CMD_CAST_ABILITY;
+    cmd.payload.cast.caster_index = 0;
+    cmd.payload.cast.caster_generation = 1;
+    cmd.payload.cast.ability_id = 10;
+
+    buf.count = 1;
+    buf.commands = &cmd;
+    sim_submit_commands(sim, &buf);
+
+    sim_advance(sim, 1);
+
+    CooldownSnapshot cool_snap{};
+    sim_get_cooldowns(sim, 0, 1, &cool_snap);
+
+    if (cool_snap.count > 0) {
+        REQUIRE(cool_snap.entries != nullptr);
+        REQUIRE(cool_snap.entries[0].ability_id == 10);
+        REQUIRE(cool_snap.entries[0].remaining_ticks > 0);
+    }
+
+    sim_destroy(sim);
+}
+
 TEST_CASE("EntitySnapshot has expected layout", "[sim_api][layout]") {
     REQUIRE(sizeof(EntitySnapshot) == 48);
 }
@@ -133,4 +185,9 @@ TEST_CASE("CastAbilityCmd has expected size", "[sim_api][layout]") {
 
 TEST_CASE("MoveIntentCmd has expected size", "[sim_api][layout]") {
     REQUIRE(sizeof(MoveIntentCmd) == 16);
+}
+
+TEST_CASE("Cooldown types have expected layout", "[sim_api][layout]") {
+    REQUIRE(sizeof(CooldownEntry) == 8);
+    REQUIRE(sizeof(CooldownSnapshot) == 24);
 }

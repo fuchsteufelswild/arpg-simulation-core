@@ -14,6 +14,7 @@ struct SimOpaque {
     std::vector<EntitySnapshot> snapshot_buffer;
     std::vector<ProjectileSnapshot> projectile_buffer;
     std::vector<DamageEventSnapshot> damage_event_buffer;
+    std::vector<CooldownEntry> cooldown_buffer;
 
 #ifdef SIM_DEBUG
     std::vector<std::string> error_log;

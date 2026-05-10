@@ -3,6 +3,7 @@
 #include "sim/effect.hpp"
 
 #include <cstdint>
+#include <span>
 #include <vector>
 
 namespace sim {
@@ -19,6 +20,8 @@ public:
     [[nodiscard]] bool is_ready(AbilityId ability_id, uint64_t current_tick) const noexcept;
 
     [[nodiscard]] uint64_t ready_at(AbilityId ability_id) const noexcept;
+
+    [[nodiscard]] std::span<const CooldownEntry> all() const noexcept { return entries_; }
 
     void clear() noexcept;
 
