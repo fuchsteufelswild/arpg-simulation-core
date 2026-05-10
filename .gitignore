@@ -37,6 +37,10 @@ unity/**/*.csproj
 unity/**/*.sln
 unity/**/Assets/Plugins/x86_64/sim_api.dll
 unity/**/Assets/Plugins/x86_64/sim_api.dll.meta
+unity/**/*.apk
+unity/**/*.unitypackage
+unity/**/.idea/
+unity/**/*.userprefs
 
 # OS
 Thumbs.db

@@ -1,0 +1,16 @@
+{
+    "name": "Sim.Tests",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c664e3bc2beccb640a224cced4d2b52a"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
