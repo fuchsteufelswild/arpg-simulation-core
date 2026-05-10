@@ -7,9 +7,24 @@ static_assert(std::is_trivially_copyable_v<EntitySnapshot>);
 static_assert(sizeof(EntitySnapshot) == 48);
 static_assert(alignof(EntitySnapshot) == 8);
 
+static_assert(std::is_standard_layout_v<ProjectileSnapshot>);
+static_assert(std::is_trivially_copyable_v<ProjectileSnapshot>);
+static_assert(sizeof(ProjectileSnapshot) == 32);
+static_assert(alignof(ProjectileSnapshot) == 4);
+
+static_assert(std::is_standard_layout_v<DamageEventSnapshot>);
+static_assert(std::is_trivially_copyable_v<DamageEventSnapshot>);
+static_assert(sizeof(DamageEventSnapshot) == 32);
+static_assert(alignof(DamageEventSnapshot) == 8);
+
+static_assert(std::is_standard_layout_v<EntitySnapshot>);
+static_assert(std::is_trivially_copyable_v<EntitySnapshot>);
+static_assert(sizeof(EntitySnapshot) == 48);
+static_assert(alignof(EntitySnapshot) == 8);
+
 static_assert(std::is_standard_layout_v<Snapshot>);
 static_assert(std::is_trivially_copyable_v<Snapshot>);
-static_assert(sizeof(Snapshot) == 24);
+static_assert(sizeof(Snapshot) == 48);
 
 static_assert(std::is_standard_layout_v<CastAbilityCmd>);
 static_assert(std::is_trivially_copyable_v<CastAbilityCmd>);

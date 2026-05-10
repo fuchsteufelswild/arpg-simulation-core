@@ -101,6 +101,7 @@ parse_ability(const toml::table& ability_table) {
 
     def.tags = parse_tags_node(ability_table["tags"].node());
     def.cast_time_ticks = ability_table["cast_time_ticks"].value_or(0u);
+    def.cooldown_ticks = ability_table["cooldown_ticks"].value_or(0u);
     def.travel_speed = ability_table["travel_speed"].value_or(0.0f);
 
     if (const auto* effects_array = ability_table["effects"].as_array()) {
@@ -114,7 +115,7 @@ parse_ability(const toml::table& ability_table) {
             if (!parsed) {
                 return std::unexpected(parsed.error());
             }
-            def.effects.push_back(std::move(*parsed));
+            def.effects.push_back(*parsed);
         }
     }
 
@@ -134,14 +135,14 @@ std::expected<uint32_t, LoadError> load_abilities_from_string(std::string_view t
         return std::unexpected(LoadError{ss.str()});
     }
 
-    const auto abilities_array = root["ability"].as_array();
+    const auto* abilities_array = root["ability"].as_array();
     if (abilities_array == nullptr) {
         return 0u;
     }
 
     uint32_t count = 0;
     for (const auto& ability_node : *abilities_array) {
-        const auto ability_table = ability_node.as_table();
+        const auto* const ability_table = ability_node.as_table();
         if (ability_table == nullptr) {
             return std::unexpected(LoadError{"ability entry is not a table"});
         }

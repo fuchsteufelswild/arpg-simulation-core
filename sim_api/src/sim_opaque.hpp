@@ -7,12 +7,13 @@
 #include <string>
 #include <vector>
 
-
 namespace sim_api {
 
 struct SimOpaque {
     sim::Sim sim;
     std::vector<EntitySnapshot> snapshot_buffer;
+    std::vector<ProjectileSnapshot> projectile_buffer;
+    std::vector<DamageEventSnapshot> damage_event_buffer;
 
 #ifdef SIM_DEBUG
     std::vector<std::string> error_log;

@@ -99,6 +99,12 @@ void AbilitySystem::cast(AbilityId ability_id,
         return;
     }
 
+    if (def->cooldown_ticks > 0) {
+        if (!res.world->cooldowns(caster).is_ready(ability_id, res.current_tick)) {
+            return;
+        }
+    }
+
     const Transform& origin = res.world->transform(caster);
 
     AbilityInstance instance{
@@ -115,6 +121,11 @@ void AbilitySystem::cast(AbilityId ability_id,
         .current_x = origin.x,
         .current_y = origin.y,
     };
+
+    if (def->cooldown_ticks > 0) {
+        res.world->cooldowns(caster).set(
+            ability_id, res.current_tick + def->cast_time_ticks + def->cooldown_ticks);
+    }
 
     if (instance.phase == AbilityPhase::Resolving) {
         resolve_instance(instance, *def, res);

@@ -79,6 +79,7 @@ TEST_CASE("trigger resolves on next tick via apply_commands", "[trigger]") {
     World world;
     SimCommands commands;
     SpatialGrid grid;
+    std::vector<DamageEvent> damage_events;
 
     AbilityDefinition ice_def{
         .name = "IceNova",
@@ -119,7 +120,7 @@ TEST_CASE("trigger resolves on next tick via apply_commands", "[trigger]") {
     };
 
     system.cast(fireball, caster, target, 0.0f, 0.0f, ctx);
-    apply_commands(system, ctx);
+    apply_commands(system, ctx, &damage_events);
 
     REQUIRE(commands.empty());
     REQUIRE_THAT(world.health(target).current, WithinAbs(350.0f, Tolerance));
@@ -164,6 +165,7 @@ TEST_CASE("trigger of unknown ability is silently ignored later", "[trigger]") {
     World world;
     SimCommands commands;
     SpatialGrid grid;
+    std::vector<DamageEvent> damage_events;
 
     AbilityDefinition fire_def{.name = "Fireball", .effects = {}};
     fire_def.effects.emplace_back(TriggerEffect{
@@ -186,6 +188,6 @@ TEST_CASE("trigger of unknown ability is silently ignored later", "[trigger]") {
     system.cast(fireball, caster, target, 0.0f, 0.0f, ctx);
     REQUIRE(commands.cast_ability.size() == 1);
 
-    apply_commands(system, ctx);
+    apply_commands(system, ctx, &damage_events);
     REQUIRE(commands.empty());
 }

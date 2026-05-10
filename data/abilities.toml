@@ -2,6 +2,7 @@
 name = "Fireball"
 tags = ["Fire", "Spell", "Projectile"]
 cast_time_ticks = 15
+cooldown_ticks = 180
 travel_speed = 25.0
 
 [[ability.effects]]
@@ -20,6 +21,7 @@ duration_ticks = 120
 name = "IceNova"
 tags = ["Cold", "Spell", "AoE"]
 cast_time_ticks = 0
+cooldown_ticks = 30
 
 [[ability.effects]]
 type = "Damage"

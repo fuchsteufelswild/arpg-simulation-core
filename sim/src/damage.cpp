@@ -5,9 +5,22 @@
 
 namespace sim {
 
-void apply_damage(const DealDamageCommand& cmd, World& world, SimCommands& commands) {
+void apply_damage(const DealDamageCommand& cmd,
+                  World& world,
+                  SimCommands& commands,
+                  std::vector<DamageEvent>* events_out) {
     if (!world.is_alive(cmd.target)) {
         return;
+    }
+
+    if (events_out != nullptr) {
+        events_out->push_back(DamageEvent{
+            .target = cmd.target,
+            .attacker = cmd.attacker,
+            .amount = cmd.amount,
+            .ability_tags = cmd.ability_tags,
+            .was_crit = false,
+        });
     }
 
     Health& health = world.health(cmd.target);

@@ -21,6 +21,7 @@ void Sim::submit_inputs(std::span<const InputCommand> commands) {
 }
 
 void Sim::tick() {
+    damage_events_.clear();
     grid_.rebuild(world_);
     process_input_commands();
     update_systems();
@@ -91,7 +92,7 @@ void Sim::apply_command_buffer() {
         .current_tick = current_tick_,
     };
 
-    apply_commands(abilities_, ctx);
+    apply_commands(abilities_, ctx, &damage_events_);
 }
 
 }  // namespace sim

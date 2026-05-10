@@ -16,6 +16,7 @@ struct AbilityDefinition {
     TagMask tags = tags::None;
 
     uint32_t cast_time_ticks = 0;
+    uint32_t cooldown_ticks = 0;
     SimFloat travel_speed = 0.0f;
 
     std::vector<Effect> effects;

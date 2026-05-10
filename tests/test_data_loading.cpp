@@ -165,7 +165,7 @@ base_amount = 50.0
 
     auto result = load_abilities_from_string(toml_text, registry);
     REQUIRE_FALSE(result.has_value());
-    REQUIRE(result.error().message.contains("FireDmg") != std::string::npos);
+    REQUIRE(result.error().message.contains("FireDmg") != false);
 }
 
 TEST_CASE("malformed TOML produces error", "[data][toml]") {

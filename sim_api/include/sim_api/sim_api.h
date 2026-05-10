@@ -22,17 +22,46 @@ typedef struct EntitySnapshot {
     float facing_radians;
     float health_current;
     float health_max;
+    uint32_t pad0;
     uint64_t status_tags;
     uint16_t entity_kind;
+    uint16_t casting_ability_id;
+    float casting_progress;
+} EntitySnapshot;
+
+typedef struct ProjectileSnapshot {
+    uint32_t caster_index;
+    uint32_t caster_generation;
+    float current_x;
+    float current_y;
+    float target_x;
+    float target_y;
+    uint16_t ability_id;
     uint16_t pad0;
     uint32_t pad1;
-} EntitySnapshot;
+} ProjectileSnapshot;
+
+typedef struct DamageEventSnapshot {
+    uint64_t ability_tags;
+    uint32_t target_index;
+    uint32_t target_generation;
+    uint32_t attacker_index;
+    uint32_t attacker_generation;
+    float amount;
+    uint16_t pad1;
+    uint8_t was_crit;
+    uint8_t pad0;
+} DamageEventSnapshot;
 
 typedef struct Snapshot {
     uint64_t tick;
-    uint32_t entity_count;
-    uint32_t pad0;
     const EntitySnapshot* entities;
+    const ProjectileSnapshot* projectiles;
+    const DamageEventSnapshot* damage_events;
+    uint32_t entity_count;
+    uint32_t projectile_count;
+    uint32_t damage_event_count;
+    uint32_t pad0;
 } Snapshot;
 
 #define SIM_CMD_CAST_ABILITY 1u

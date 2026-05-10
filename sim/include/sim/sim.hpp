@@ -2,6 +2,7 @@
 
 #include "sim/ability_registry.hpp"
 #include "sim/ability_system.hpp"
+#include "sim/damage_event.hpp"
 #include "sim/input_command.hpp"
 #include "sim/sim_commands.hpp"
 #include "sim/sim_rng.hpp"
@@ -38,6 +39,10 @@ public:
     [[nodiscard]] SimRng& rng() noexcept { return rng_; }
     [[nodiscard]] const SimRng& rng() const noexcept { return rng_; }
 
+    [[nodiscard]] std::span<const DamageEvent> damage_events() const noexcept {
+        return damage_events_;
+    }
+
 private:
     void process_input_commands();
     void update_systems();
@@ -51,6 +56,8 @@ private:
 
     SimCommands commands_;
     std::vector<InputCommand> pending_inputs_;
+
+    std::vector<DamageEvent> damage_events_;
 
     uint64_t current_tick_ = 0;
 };

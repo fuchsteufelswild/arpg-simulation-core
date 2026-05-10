@@ -2,6 +2,7 @@
 #include "sim/ability_registry.hpp"
 #include "sim/ability_system.hpp"
 #include "sim/damage.hpp"
+#include "sim/damage_event.hpp"
 #include "sim/effect_context.hpp"
 #include "sim/sim_commands.hpp"
 #include "sim/world.hpp"
@@ -33,8 +34,9 @@ register_fireball(AbilityRegistry& registry, uint32_t cast_time = 0, SimFloat ba
 
 void apply_all_commands(SimCommands& commands, World& world) {
     SimCommands followup;
+    std::vector<DamageEvent> damage_events;
     for (const auto& cmd : commands.deal_damage) {
-        apply_damage(cmd, world, followup);
+        apply_damage(cmd, world, followup, &damage_events);
     }
     for (const auto& cmd : commands.kill_entity) {
         if (world.is_alive(cmd.entity)) {

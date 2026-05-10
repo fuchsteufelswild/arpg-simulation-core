@@ -18,6 +18,7 @@ add_library(sim STATIC
     src/sim.cpp
     src/data/enum_lookup.cpp
     src/data/ability_loader.cpp
+    src/cooldown.cpp
 )
 
 target_include_directories(sim

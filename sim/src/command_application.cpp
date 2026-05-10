@@ -8,7 +8,9 @@
 
 namespace sim {
 
-void apply_commands(AbilitySystem& abilities, const ResolutionContext& res) {
+void apply_commands(AbilitySystem& abilities,
+                    const ResolutionContext& res,
+                    std::vector<DamageEvent>* events_out) {
     if (res.world == nullptr || res.commands == nullptr) {
         return;
     }
@@ -24,7 +26,7 @@ void apply_commands(AbilitySystem& abilities, const ResolutionContext& res) {
         *res.commands = SimCommands{};
 
         for (const DealDamageCommand& cmd : snapshot.deal_damage) {
-            apply_damage(cmd, *res.world, *res.commands);
+            apply_damage(cmd, *res.world, *res.commands, events_out);
         }
 
         for (const KillEntityCommand& cmd : snapshot.kill_entity) {

@@ -98,12 +98,33 @@ TEST_CASE("two sims are independent", "[sim_api]") {
     sim_destroy(sim_b);
 }
 
-TEST_CASE("EntitySnapshot has expected size", "[sim_api][layout]") {
+TEST_CASE("snapshot has zero counts in empty sim", "[sim_api]") {
+    SimHandle sim = sim_create(42);
+
+    Snapshot snap{};
+    sim_get_snapshot(sim, &snap);
+
+    REQUIRE(snap.entity_count == 0);
+    REQUIRE(snap.projectile_count == 0);
+    REQUIRE(snap.damage_event_count == 0);
+
+    sim_destroy(sim);
+}
+
+TEST_CASE("EntitySnapshot has expected layout", "[sim_api][layout]") {
     REQUIRE(sizeof(EntitySnapshot) == 48);
 }
 
+TEST_CASE("ProjectileSnapshot has expected layout", "[sim_api][layout]") {
+    REQUIRE(sizeof(ProjectileSnapshot) == 32);
+}
+
+TEST_CASE("DamageEventSnapshot has expected layout", "[sim_api][layout]") {
+    REQUIRE(sizeof(DamageEventSnapshot) == 32);
+}
+
 TEST_CASE("Snapshot has expected size", "[sim_api][layout]") {
-    REQUIRE(sizeof(Snapshot) == 24);
+    REQUIRE(sizeof(Snapshot) == 48);
 }
 
 TEST_CASE("CastAbilityCmd has expected size", "[sim_api][layout]") {

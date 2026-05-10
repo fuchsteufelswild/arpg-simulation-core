@@ -18,6 +18,7 @@ add_executable(sim_tests
     test_projectile_travel.cpp
     test_sim.cpp
     test_data_loading.cpp
+    test_cooldown.cpp
 )
 
 target_link_libraries(sim_tests
