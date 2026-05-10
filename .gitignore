@@ -26,17 +26,17 @@ cmake_install.cmake
 vcpkg_installed/
 
 # Unity
-unity/Library/
-unity/Temp/
-unity/Logs/
-unity/UserSettings/
-unity/obj/
-unity/Build/
-unity/MemoryCaptures/
-unity/*.csproj
-unity/*.sln
-unity/Assets/Plugins/x86_64/sim_api.dll
-unity/Assets/Plugins/x86_64/sim_api.dll.meta
+unity/**/Library/
+unity/**/Temp/
+unity/**/Logs/
+unity/**/UserSettings/
+unity/**/obj/
+unity/**/Build/
+unity/**/MemoryCaptures/
+unity/**/*.csproj
+unity/**/*.sln
+unity/**/Assets/Plugins/x86_64/sim_api.dll
+unity/**/Assets/Plugins/x86_64/sim_api.dll.meta
 
 # OS
 Thumbs.db
