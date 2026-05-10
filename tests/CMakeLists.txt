@@ -17,6 +17,7 @@ add_executable(sim_tests
     test_trigger_effect.cpp
     test_projectile_travel.cpp
     test_sim.cpp
+    test_data_loading.cpp
 )
 
 target_link_libraries(sim_tests
