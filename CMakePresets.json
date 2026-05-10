@@ -12,7 +12,7 @@
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_TOOLCHAIN_FILE": "C:/vcpkg/scripts/buildsystems/vcpkg.cmake",
+                "CMAKE_TOOLCHAIN_FILE": "$penv{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
             },
             "environment": {
@@ -39,14 +39,22 @@
         }
     ],
     "buildPresets": [
-        { "name": "debug",   "configurePreset": "debug" },
-        { "name": "release", "configurePreset": "release" }
+        {
+            "name": "debug",
+            "configurePreset": "debug"
+        },
+        {
+            "name": "release",
+            "configurePreset": "release"
+        }
     ],
     "testPresets": [
         {
             "name": "debug",
             "configurePreset": "debug",
-            "output": { "outputOnFailure": true }
+            "output": {
+                "outputOnFailure": true
+            }
         }
     ]
 }
