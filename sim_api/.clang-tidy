@@ -1,0 +1,23 @@
+---
+InheritParentConfig: true
+
+Checks: >
+  -modernize-use-using,
+  -modernize-use-trailing-return-type,
+  -modernize-macro-to-enum,
+  -modernize-deprecated-headers,
+  -modernize-avoid-c-arrays,
+  -modernize-use-nodiscard,
+  -cppcoreguidelines-pro-type-union-access,
+  -cppcoreguidelines-pro-type-vararg,
+  -cppcoreguidelines-macro-usage,
+  -cppcoreguidelines-avoid-c-arrays,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-no-malloc,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -hicpp-use-auto,
+  -hicpp-no-malloc,
+  -bugprone-empty-catch,
+  -cert-err33-c
