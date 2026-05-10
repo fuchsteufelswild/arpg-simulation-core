@@ -20,6 +20,7 @@ add_executable(sim_tests
     test_data_loading.cpp
     test_cooldown.cpp
     test_crit.cpp
+    test_replay.cpp
 )
 
 target_link_libraries(sim_tests

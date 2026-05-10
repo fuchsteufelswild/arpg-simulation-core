@@ -19,6 +19,9 @@ add_library(sim STATIC
     src/data/enum_lookup.cpp
     src/data/ability_loader.cpp
     src/cooldown.cpp
+    src/input_log.cpp
+    src/world_hash.cpp
+    src/replay.cpp
 )
 
 target_include_directories(sim
