@@ -46,6 +46,7 @@ void Sim::process_input_commands() {
         .grid = &grid_,
         .commands = &commands_,
         .current_tick = current_tick_,
+        .rng = &rng_,
     };
 
     for (const InputCommand& input : pending_inputs_) {
@@ -73,6 +74,7 @@ void Sim::update_systems() {
         .grid = &grid_,
         .commands = &commands_,
         .current_tick = current_tick_,
+        .rng = &rng_,
     };
 
     abilities_.update(ctx);
@@ -90,6 +92,7 @@ void Sim::apply_command_buffer() {
         .grid = &grid_,
         .commands = &commands_,
         .current_tick = current_tick_,
+        .rng = &rng_,
     };
 
     apply_commands(abilities_, ctx, &damage_events_);

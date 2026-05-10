@@ -19,7 +19,7 @@ void apply_damage(const DealDamageCommand& cmd,
             .attacker = cmd.attacker,
             .amount = cmd.amount,
             .ability_tags = cmd.ability_tags,
-            .was_crit = false,
+            .was_crit = cmd.was_crit,
         });
     }
 

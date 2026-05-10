@@ -11,6 +11,7 @@ class World;
 class EntityStats;
 struct SimCommands;
 class SpatialGrid;
+class SimRng;
 
 struct EffectContext {
     const AbilityDefinition* definition = nullptr;
@@ -22,6 +23,7 @@ struct EffectContext {
     SimCommands* commands = nullptr;
     uint64_t current_tick = 0;
     const SpatialGrid* grid = nullptr;
+    SimRng* rng = nullptr;
 };
 
 }  // namespace sim

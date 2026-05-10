@@ -7,7 +7,6 @@
 
 #include <vector>
 
-
 namespace sim {
 
 struct DealDamageCommand {
@@ -15,6 +14,7 @@ struct DealDamageCommand {
     EntityHandle target;
     SimFloat amount = 0.0f;
     TagMask ability_tags = tags::None;
+    bool was_crit = false;
 };
 
 struct KillEntityCommand {

@@ -47,6 +47,7 @@ void resolve_instance(const AbilityInstance& instance,
         .commands = res.commands,
         .current_tick = res.current_tick,
         .grid = res.grid,
+        .rng = res.rng,
     };
 
     if (res.world->is_alive(instance.initial_target)) {

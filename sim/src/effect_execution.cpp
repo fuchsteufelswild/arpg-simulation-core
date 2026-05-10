@@ -6,6 +6,7 @@
 #include "sim/eval_context.hpp"
 #include "sim/evaluate.hpp"
 #include "sim/sim_commands.hpp"
+#include "sim/sim_rng.hpp"
 #include "sim/spatial_grid.hpp"
 #include "sim/world.hpp"
 
@@ -55,21 +56,58 @@ void execute_damage_effect(const DamageEffect& effect, EffectContext& ctx) {
         .ability_tags = ctx.definition->tags,
         .target_tags = target_tags,
         .current_tick = ctx.current_tick,
+        .is_crit = false,
     };
 
     const SimFloat from_modifiers =
         evaluate_stat(*ctx.world, *ctx.caster_stats, effect.damage_stat, eval);
-    const SimFloat total = effect.base_amount + from_modifiers;
+    SimFloat amount = effect.base_amount + from_modifiers;
 
-    if (total <= 0.0f) {
+    if (amount <= 0.0f) {
         return;
+    }
+
+    bool crit = false;
+    if (ctx.rng != nullptr) {
+        const SimFloat crit_chance =
+            evaluate_stat(*ctx.world, *ctx.caster_stats, StatId::CritChance, eval);
+        if (crit_chance > 0.0f && ctx.rng->next_float_unit() < crit_chance) {
+            crit = true;
+
+            const EvalContext crit_eval{
+                .attacker = ctx.instance->caster,
+                .target = ctx.current_target,
+                .ability_tags = ctx.definition->tags,
+                .target_tags = target_tags,
+                .current_tick = ctx.current_tick,
+                .is_crit = true,
+            };
+
+            const SimFloat from_crit_mods =
+                evaluate_stat(*ctx.world, *ctx.caster_stats, effect.damage_stat, crit_eval);
+            amount = effect.base_amount + from_crit_mods;
+
+            const SimFloat crit_mult =
+                evaluate_stat(*ctx.world, *ctx.caster_stats, StatId::CritMultiplier, eval);
+            const SimFloat effective_mult = (crit_mult > 0.0f) ? crit_mult : 1.5f;
+            amount *= effective_mult;
+        }
+    }
+
+    if (amount <= 0.0f) {
+        return;
+    }
+
+    if (crit && ctx.world->is_alive(ctx.instance->caster)) {
+        ctx.world->recent_events(ctx.instance->caster).push(EventType::CritHit, ctx.current_tick);
     }
 
     ctx.commands->deal_damage.push_back(DealDamageCommand{
         .attacker = ctx.instance->caster,
         .target = ctx.current_target,
-        .amount = total,
+        .amount = amount,
         .ability_tags = ctx.definition->tags,
+        .was_crit = crit,
     });
 }
 

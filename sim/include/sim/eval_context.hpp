@@ -13,6 +13,7 @@ struct EvalContext {
     TagMask ability_tags = tags::None;
     TagMask target_tags = tags::None;
     uint64_t current_tick = 0;
+    bool is_crit = false;
 };
 
 }  // namespace sim

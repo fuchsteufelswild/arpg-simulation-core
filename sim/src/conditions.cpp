@@ -60,8 +60,7 @@ bool evaluate_condition(ConditionId condition,
     case ConditionId::AgainstIgnited:
         return against_status(ctx, tags::Ignited);
     case ConditionId::OnCrit:
-        // Implement when Hit data is available
-        return false;
+        return ctx.is_crit;
     case ConditionId::CritRecently:
         return crit_recently(world, ctx, condition_param);
     }
