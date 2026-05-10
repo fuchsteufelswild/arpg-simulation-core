@@ -277,3 +277,23 @@ extern "C" SIM_API void sim_get_cooldowns(SimHandle sim,
     out_snapshot->pad0 = 0;
     out_snapshot->entries = opaque->cooldown_buffer.data();
 }
+
+extern "C" SIM_API uint64_t sim_debug_spawn_entity(SimHandle sim,
+                                                   uint16_t entity_kind,
+                                                   float pos_x,
+                                                   float pos_y) {
+    auto* opaque = unwrap(sim);
+    if (opaque == nullptr) {
+        return 0;
+    }
+    try {
+        sim::EntityHandle handle =
+            opaque->sim.world().spawn(static_cast<sim::EntityKind>(entity_kind));
+        opaque->sim.world().transform(handle) =
+            sim::Transform{.x = pos_x, .y = pos_y, .facing_radians = 0.0f};
+
+        return (static_cast<uint64_t>(handle.generation) << 32) | handle.index;
+    } catch (...) {
+        return 0;
+    }
+}

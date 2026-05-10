@@ -133,6 +133,14 @@ SIM_API void sim_get_cooldowns(SimHandle sim,
                                uint32_t entity_generation,
                                CooldownSnapshot* out_snapshot);
 
+// Debug-only spawn API. Production code should drive spawning from sim-side
+// level data, not from the client. Exposed to allow Unity demos and tests
+// to populate the world without scene-loading infrastructure.
+SIM_API uint64_t sim_debug_spawn_entity(SimHandle sim,
+                                        uint16_t entity_kind,
+                                        float pos_x,
+                                        float pos_y);
+
 #ifdef __cplusplus
 }
 #endif

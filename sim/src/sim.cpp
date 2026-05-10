@@ -4,12 +4,15 @@
 #include "sim/resolution_context.hpp"
 #include "sim/status_system.hpp"
 #include "sim/util/overload.hpp"
+#include "sim/world.hpp"
 
 #include <variant>
 
 namespace sim {
 
 Sim::Sim(uint64_t seed) : rng_(seed) {
+    EntityHandle player_handle = world().spawn(static_cast<EntityKind>(EntityKind::Player));
+    world().transform(player_handle) = Transform{.x = 0.0f, .y = 0.0f, .facing_radians = 0.0f};
 }
 
 void Sim::submit_input(InputCommand command) {
