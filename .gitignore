@@ -35,8 +35,8 @@ unity/Build/
 unity/MemoryCaptures/
 unity/*.csproj
 unity/*.sln
-unity/Assets/Plugins/sim_api.dll
-unity/Assets/Plugins/sim_api.dll.meta
+unity/Assets/Plugins/x86_64/sim_api.dll
+unity/Assets/Plugins/x86_64/sim_api.dll.meta
 
 # OS
 Thumbs.db

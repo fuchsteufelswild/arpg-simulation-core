@@ -30,6 +30,6 @@ set_target_properties(sim_api PROPERTIES
 add_custom_command(TARGET sim_api POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         $<TARGET_FILE:sim_api>
-        "${CMAKE_SOURCE_DIR}/../unity/Assets/Plugins/x86_64/sim_api.dll"
+        "${CMAKE_SOURCE_DIR}/unity/arpg-sim-client/Assets/Plugins/x86_64/sim_api.dll"
     COMMENT "Copying sim_api.dll to Unity Plugins directory..."
 )
