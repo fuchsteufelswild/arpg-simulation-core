@@ -1,6 +1,6 @@
 # ARPG Simulation Core
 
-A deterministic, data-driven gameplay simulation core for ARPGs, written in modern C++23. The simulation runs as a DLL with a stable C ABI; the visualization layer (Unity) is a separate consumer and currently WIP.
+A deterministic, data-driven gameplay simulation core for ARPGs, written in modern C++23. The simulation runs as a DLL with a stable C ABI; the visualization layer (Unity) is a separate consumer and currently [**WIP**](https://github.com/fuchsteufelswild/arpg-simulation-core/tree/master/unity/arpg-sim-client).
 
 ## What this is
 
