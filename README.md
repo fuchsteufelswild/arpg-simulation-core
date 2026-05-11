@@ -87,7 +87,7 @@ Outputs land in `build/debug/bin/`:
 dumpbin /exports build\debug\bin\sim_api.dll
 ```
 
-You should see six unmangled exports: `sim_create`, `sim_destroy`, `sim_advance`, `sim_submit_commands`, `sim_get_snapshot`, `sim_version`.
+You should see six unmangled exports: `sim_create`, `sim_destroy`, `sim_advance`, `sim_submit_commands`, `sim_get_snapshot`, `sim_get_cooldowns`, `sim_debug_spawn_entity`, `sim_version`.
 
 ## Project structure
 ```mermaid
