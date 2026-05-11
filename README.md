@@ -4,15 +4,15 @@ A deterministic, data-driven gameplay simulation core for ARPGs, written in mode
 
 ## What this is
 
-A clean implementation of the gameplay systems that define ARPGs like Path of Exile — modifier evaluation, ability composition, status effects, deterministic combat — separated cleanly from rendering and input. The C++ core knows nothing about Unity, OpenGL, or graphics. Unity reads sim state via snapshots and submits commands. The boundary is a five-function C ABI.
+A clean implementation of the gameplay systems that define ARPGs like Path of Exile — modifier evaluation, ability composition, status effects, deterministic combat — separated cleanly from rendering and input. The C++ core knows nothing about Unity, OpenGL, or graphics. Unity reads sim state via snapshots and submits commands. The boundary is a nine-function C ABI.
 
 The project demonstrates production-grade C++ gameplay architecture: data-oriented design, clear ownership, deterministic update loops, layered systems, comprehensive testing.
 
 ## Architecture at a glance
 
 - **Pure C++23 simulation library** (`sim/`) — world, entities, modifiers, abilities, status effects, the tick loop
-- **C ABI shim** (`sim_api/`) — five exported functions, opaque handle, zero-copy snapshots, marshaled commands
-- **Test suite** (`tests/`, `sim_api/tests/`) — 191 tests covering unit behavior and integration scenarios
+- **C ABI shim** (`sim_api/`) — nine exported functions, opaque handle, zero-copy snapshots, marshaled commands
+- **Test suite** (`tests/`, `sim_api/tests/`) — 210 tests covering unit behavior and integration scenarios
 - **Data-driven content** (`data/abilities.toml`) — abilities defined declaratively and loaded at startup
 
 The C++ core is single-threaded by design — determinism is significantly cheaper to guarantee on a single thread, and the workload doesn't justify threading at this scale.
@@ -87,7 +87,7 @@ Outputs land in `build/debug/bin/`:
 dumpbin /exports build\debug\bin\sim_api.dll
 ```
 
-You should see six unmangled exports: `sim_create`, `sim_destroy`, `sim_advance`, `sim_submit_commands`, `sim_get_snapshot`, `sim_get_cooldowns`, `sim_debug_spawn_entity`, `sim_version`.
+You should see six unmangled exports: `sim_create`, `sim_destroy`, `sim_advance`, `sim_submit_commands`, `sim_get_snapshot`, `sim_get_cooldowns`, `sim_debug_spawn_entity`, `sim_version`, `sim_load_content`, `sim_spawn_archetype`.
 
 ## Project structure
 ```mermaid
