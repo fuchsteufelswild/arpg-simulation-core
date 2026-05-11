@@ -26,7 +26,7 @@ AbilityId register_simple_attack(AbilityRegistry& registry) {
 
 TEST_CASE("zero crit chance never crits", "[crit]") {
     Sim sim(42);
-    const AbilityId strike = register_simple_attack(sim.registry());
+    const AbilityId strike = register_simple_attack(sim.ability_registry());
 
     auto caster = sim.world().spawn(EntityKind::Player);
     auto target = sim.world().spawn(EntityKind::Enemy);
@@ -46,7 +46,7 @@ TEST_CASE("zero crit chance never crits", "[crit]") {
 
 TEST_CASE("100% crit chance always crits", "[crit]") {
     Sim sim(42);
-    const AbilityId strike = register_simple_attack(sim.registry());
+    const AbilityId strike = register_simple_attack(sim.ability_registry());
 
     auto caster = sim.world().spawn(EntityKind::Player);
     sim.world().stats(caster).add_modifier(Modifier{
@@ -71,7 +71,7 @@ TEST_CASE("100% crit chance always crits", "[crit]") {
 
 TEST_CASE("crit multiplier scales the crit damage", "[crit]") {
     Sim sim(42);
-    const AbilityId strike = register_simple_attack(sim.registry());
+    const AbilityId strike = register_simple_attack(sim.ability_registry());
 
     auto caster = sim.world().spawn(EntityKind::Player);
     sim.world().stats(caster).add_modifier(Modifier{
@@ -102,7 +102,7 @@ TEST_CASE("crit multiplier scales the crit damage", "[crit]") {
 
 TEST_CASE("OnCrit modifier only applies on critical hits", "[crit][conditions]") {
     Sim sim(42);
-    const AbilityId strike = register_simple_attack(sim.registry());
+    const AbilityId strike = register_simple_attack(sim.ability_registry());
 
     auto caster = sim.world().spawn(EntityKind::Player);
     sim.world().stats(caster).add_modifier(Modifier{
@@ -140,7 +140,7 @@ TEST_CASE("OnCrit modifier only applies on critical hits", "[crit][conditions]")
 
 TEST_CASE("CritRecently condition picks up crit events", "[crit][conditions]") {
     Sim sim(42);
-    const AbilityId strike = register_simple_attack(sim.registry());
+    const AbilityId strike = register_simple_attack(sim.ability_registry());
 
     auto caster = sim.world().spawn(EntityKind::Player);
     sim.world().stats(caster).add_modifier(Modifier{
@@ -166,7 +166,7 @@ TEST_CASE("CritRecently condition picks up crit events", "[crit][conditions]") {
 
 TEST_CASE("damage event records crit flag", "[crit]") {
     Sim sim(42);
-    const AbilityId strike = register_simple_attack(sim.registry());
+    const AbilityId strike = register_simple_attack(sim.ability_registry());
 
     auto caster = sim.world().spawn(EntityKind::Player);
     sim.world().stats(caster).add_modifier(Modifier{
@@ -194,7 +194,7 @@ TEST_CASE("damage event records crit flag", "[crit]") {
 TEST_CASE("same seed produces same crit sequence", "[crit][determinism]") {
     auto run = [](uint64_t seed) -> std::vector<bool> {
         Sim sim(seed);
-        const AbilityId strike = register_simple_attack(sim.registry());
+        const AbilityId strike = register_simple_attack(sim.ability_registry());
 
         auto caster = sim.world().spawn(EntityKind::Player);
         sim.world().stats(caster).add_modifier(Modifier{

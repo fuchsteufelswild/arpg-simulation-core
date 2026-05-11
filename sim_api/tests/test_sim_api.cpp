@@ -39,7 +39,7 @@ TEST_CASE("snapshot reflects entity count", "[sim_api]") {
 
     Snapshot snap{};
     sim_get_snapshot(sim, &snap);
-    REQUIRE(snap.entity_count == 1);
+    REQUIRE(snap.entity_count == 0);
 
     sim_destroy(sim);
 }
@@ -104,7 +104,7 @@ TEST_CASE("snapshot has zero counts in empty sim", "[sim_api]") {
     Snapshot snap{};
     sim_get_snapshot(sim, &snap);
 
-    REQUIRE(snap.entity_count == 1);
+    REQUIRE(snap.entity_count == 0);
     REQUIRE(snap.projectile_count == 0);
     REQUIRE(snap.damage_event_count == 0);
 

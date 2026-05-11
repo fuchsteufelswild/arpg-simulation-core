@@ -1,5 +1,6 @@
 #include "sim_api/sim_api.h"
 
+#include "sim/data/bootstrap.hpp"
 #include "sim/input_command.hpp"
 #include "sim/sim.hpp"
 #include "sim/version.hpp"
@@ -295,5 +296,67 @@ extern "C" SIM_API uint64_t sim_debug_spawn_entity(SimHandle sim,
         return (static_cast<uint64_t>(handle.generation) << 32) | handle.index;
     } catch (...) {
         return 0;
+    }
+}
+
+extern "C" SIM_API uint64_t sim_spawn_archetype(SimHandle sim,
+                                                const char* archetype_name,
+                                                float pos_x,
+                                                float pos_y) {
+    auto* opaque = unwrap(sim);
+    if (opaque == nullptr || archetype_name == nullptr) {
+        return 0;
+    }
+
+    try {
+        auto handle_result =
+            sim::data::spawn_archetype_by_name(opaque->sim, archetype_name, pos_x, pos_y);
+        if (!handle_result) {
+            return 0;
+        }
+        const sim::EntityHandle handle = *handle_result;
+        return (static_cast<uint64_t>(handle.generation) << 32) | handle.index;
+    } catch (...) {
+        return 0;
+    }
+}
+
+extern "C" SIM_API int32_t sim_load_content(SimHandle sim,
+                                            const char* abilities_toml,
+                                            size_t abilities_len,
+                                            const char* archetypes_toml,
+                                            size_t archetypes_len) {
+    auto* opaque = unwrap(sim);
+    if (opaque == nullptr) {
+        return 1;
+    }
+
+    try {
+        const sim::data::ContentSources sources{
+            .abilities_toml = std::string_view{abilities_toml, abilities_len},
+            .archetypes_toml = std::string_view{archetypes_toml, archetypes_len},
+        };
+
+        auto result = sim::data::bootstrap_from_strings(opaque->sim, sources);
+        if (!result) {
+#ifdef SIM_DEBUG
+            opaque->error_log.emplace_back(result.error().message);
+#endif
+            return 3;
+        }
+#ifdef SIM_DEBUG
+        opaque->error_log.emplace_back("");
+#endif
+        return 0;
+    } catch (const std::exception& e) {
+#ifdef SIM_DEBUG
+        opaque->error_log.emplace_back(e.what());
+#endif
+        return 4;
+    } catch (...) {
+#ifdef SIM_DEBUG
+        opaque->error_log.emplace_back("unknown exception during content load");
+#endif
+        return 5;
     }
 }

@@ -21,6 +21,8 @@ add_executable(sim_tests
     test_cooldown.cpp
     test_crit.cpp
     test_replay.cpp
+    test_ai.cpp
+    test_archetype_loader.cpp
 )
 
 target_link_libraries(sim_tests

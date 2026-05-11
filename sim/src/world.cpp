@@ -18,6 +18,7 @@ EntityHandle World::spawn(EntityKind kind) noexcept {
         recent_events_[index].clear();
         status_lists_[index].clear();
         cooldown_lists_[index].clear();
+        ai_behaviours_[index] = {};
     } else {
         index = static_cast<uint32_t>(generations_.size());
         generations_.push_back(1);
@@ -28,6 +29,7 @@ EntityHandle World::spawn(EntityKind kind) noexcept {
         recent_events_.emplace_back();
         status_lists_.emplace_back();
         cooldown_lists_.emplace_back();
+        ai_behaviours_.emplace_back();
     }
 
     ++alive_count_;
@@ -142,6 +144,16 @@ CooldownList& World::cooldowns(EntityHandle handle) noexcept {
 const CooldownList& World::cooldowns(EntityHandle handle) const noexcept {
     assert(is_alive(handle) && "cooldowns() called with stale handle");
     return cooldown_lists_[handle.index];
+}
+
+AIBehaviour& World::ai_behaviour(EntityHandle handle) noexcept {
+    assert(is_alive(handle) && "ai_behavior() called with stale handle");
+    return ai_behaviours_[handle.index];
+}
+
+const AIBehaviour& World::ai_behaviour(EntityHandle handle) const noexcept {
+    assert(is_alive(handle) && "ai_behaviour() called with stale handle");
+    return ai_behaviours_[handle.index];
 }
 
 }  // namespace sim

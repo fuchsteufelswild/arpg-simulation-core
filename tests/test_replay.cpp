@@ -25,7 +25,7 @@ AbilityId register_replay_fireball(AbilityRegistry& registry) {
 }
 
 void setup_simple_scenario(Sim& sim) {
-    register_replay_fireball(sim.registry());
+    register_replay_fireball(sim.ability_registry());
     auto caster = sim.world().spawn(EntityKind::Player);
     sim.world().stats(caster).add_modifier(Modifier{
         .stat = StatId::CritChance,
@@ -174,7 +174,7 @@ TEST_CASE("complex scenario with crits replays deterministically", "[replay][det
     }
 
     auto setup = [](Sim& sim) {
-        register_replay_fireball(sim.registry());
+        register_replay_fireball(sim.ability_registry());
         auto c = sim.world().spawn(EntityKind::Player);
         sim.world().stats(c).add_modifier(Modifier{
             .stat = StatId::CritChance,

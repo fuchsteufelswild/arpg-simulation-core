@@ -1,18 +1,16 @@
 #include "sim/sim.hpp"
 
+#include "sim/ai_system.hpp"
 #include "sim/command_application.hpp"
 #include "sim/resolution_context.hpp"
 #include "sim/status_system.hpp"
 #include "sim/util/overload.hpp"
-#include "sim/world.hpp"
 
 #include <variant>
 
 namespace sim {
 
 Sim::Sim(uint64_t seed) : rng_(seed) {
-    EntityHandle player_handle = world().spawn(static_cast<EntityKind>(EntityKind::Player));
-    world().transform(player_handle) = Transform{.x = 0.0f, .y = 0.0f, .facing_radians = 0.0f};
 }
 
 void Sim::submit_input(InputCommand command) {
@@ -45,7 +43,7 @@ void Sim::process_input_commands() {
 
     const ResolutionContext ctx{
         .world = &world_,
-        .registry = &registry_,
+        .registry = &ability_registry_,
         .grid = &grid_,
         .commands = &commands_,
         .current_tick = current_tick_,
@@ -73,13 +71,14 @@ void Sim::process_input_commands() {
 void Sim::update_systems() {
     const ResolutionContext ctx{
         .world = &world_,
-        .registry = &registry_,
+        .registry = &ability_registry_,
         .grid = &grid_,
         .commands = &commands_,
         .current_tick = current_tick_,
         .rng = &rng_,
     };
 
+    update_ai(world_, grid_, commands_, current_tick_);
     abilities_.update(ctx);
     update_statuses(world_, commands_, current_tick_);
 }
@@ -91,7 +90,7 @@ void Sim::apply_command_buffer() {
 
     const ResolutionContext ctx{
         .world = &world_,
-        .registry = &registry_,
+        .registry = &ability_registry_,
         .grid = &grid_,
         .commands = &commands_,
         .current_tick = current_tick_,

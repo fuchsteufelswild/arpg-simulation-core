@@ -27,8 +27,8 @@ TEST_CASE("ability definition holds effects in order", "[ability]") {
         .cast_time_ticks = 15,
         .effects = {},
     };
-    def.effects.push_back(DamageEffect{.damage_stat = StatId::FireDamage, .base_amount = 40.0f});
-    def.effects.push_back(ChainEffect{.max_chains = 3, .falloff = 0.8f, .radius = 5.0f});
+    def.effects.emplace_back(DamageEffect{.damage_stat = StatId::FireDamage, .base_amount = 40.0f});
+    def.effects.emplace_back(ChainEffect{.max_chains = 3, .falloff = 0.8f, .radius = 5.0f});
 
     REQUIRE(def.effects.size() == 2);
     REQUIRE(std::holds_alternative<DamageEffect>(def.effects[0]));

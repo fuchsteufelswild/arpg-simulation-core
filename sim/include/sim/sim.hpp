@@ -3,6 +3,7 @@
 #include "sim/ability_registry.hpp"
 #include "sim/ability_system.hpp"
 #include "sim/damage_event.hpp"
+#include "sim/entity_archetype_registry.hpp"
 #include "sim/input_command.hpp"
 #include "sim/sim_commands.hpp"
 #include "sim/sim_rng.hpp"
@@ -29,8 +30,17 @@ public:
     [[nodiscard]] World& world() noexcept { return world_; }
     [[nodiscard]] const World& world() const noexcept { return world_; }
 
-    [[nodiscard]] AbilityRegistry& registry() noexcept { return registry_; }
-    [[nodiscard]] const AbilityRegistry& registry() const noexcept { return registry_; }
+    [[nodiscard]] AbilityRegistry& ability_registry() noexcept { return ability_registry_; }
+    [[nodiscard]] const AbilityRegistry& ability_registry() const noexcept {
+        return ability_registry_;
+    }
+
+    [[nodiscard]] EntityArchetypeRegistry& archetype_registry() noexcept {
+        return archetype_registry_;
+    }
+    [[nodiscard]] const EntityArchetypeRegistry& archetype_registry() const noexcept {
+        return archetype_registry_;
+    }
 
     [[nodiscard]] const AbilitySystem& abilities() const noexcept { return abilities_; }
 
@@ -49,7 +59,8 @@ private:
     void apply_command_buffer();
 
     World world_;
-    AbilityRegistry registry_;
+    AbilityRegistry ability_registry_;
+    EntityArchetypeRegistry archetype_registry_;
     AbilitySystem abilities_;
     SpatialGrid grid_;
     SimRng rng_;

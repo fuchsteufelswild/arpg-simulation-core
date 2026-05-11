@@ -58,3 +58,12 @@ if(SIM_BUILD_TESTS)
     add_subdirectory(tests)
     add_subdirectory(sim_api/tests)
 endif()
+
+add_custom_target(sim_copy_data ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/data
+        ${CMAKE_BINARY_DIR}/bin/data
+    COMMENT "Copying data to build tree"
+)
+
+add_dependencies(sim sim_copy_data)

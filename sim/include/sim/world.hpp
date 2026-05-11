@@ -1,5 +1,6 @@
 #pragma once
 
+#include "sim/ai_behaviour.hpp"
 #include "sim/cooldown.hpp"
 #include "sim/entity_handle.hpp"
 #include "sim/entity_stats.hpp"
@@ -56,6 +57,8 @@ public:
     [[nodiscard]] const StatusList& status_list(EntityHandle handle) const noexcept;
     [[nodiscard]] CooldownList& cooldowns(EntityHandle handle) noexcept;
     [[nodiscard]] const CooldownList& cooldowns(EntityHandle handle) const noexcept;
+    [[nodiscard]] AIBehaviour& ai_behaviour(EntityHandle handle) noexcept;
+    [[nodiscard]] const AIBehaviour& ai_behaviour(EntityHandle handle) const noexcept;
 
 private:
     [[nodiscard]] bool index_in_bounds(uint32_t index) const noexcept {
@@ -70,6 +73,7 @@ private:
     std::vector<EntityStats> stats_;
     std::vector<StatusList> status_lists_;
     std::vector<CooldownList> cooldown_lists_;
+    std::vector<AIBehaviour> ai_behaviours_;
 
     std::vector<uint32_t> free_indices_;
 

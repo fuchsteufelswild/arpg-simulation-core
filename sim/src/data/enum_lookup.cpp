@@ -88,6 +88,12 @@ constexpr std::array<Mapping<TagMask>, 14> TagTable{{
     {.name = "Crit", .value = tags::Crit},
 }};
 
+constexpr std::array<Mapping<EntityKind>, 3> KindTable{{
+    {.name = "Player", .value = EntityKind::Player},
+    {.name = "Enemy", .value = EntityKind::Enemy},
+    {.name = "Projectile", .value = EntityKind::Projectile},
+}};
+
 }  // namespace
 
 std::optional<StatId> stat_from_string(std::string_view name) noexcept {
@@ -112,6 +118,10 @@ std::optional<StatusType> status_from_string(std::string_view name) noexcept {
 
 std::optional<TagMask> tag_from_string(std::string_view name) noexcept {
     return lookup(TagTable, name);
+}
+
+std::optional<EntityKind> kind_from_string(std::string_view name) noexcept {
+    return lookup(KindTable, name);
 }
 
 TagMask parse_tag_list(std::string_view tags_csv) {

@@ -57,7 +57,7 @@ TEST_CASE("advance_to in past does nothing", "[sim]") {
 
 TEST_CASE("input cast command resolves through sim", "[sim]") {
     Sim sim;
-    const AbilityId fireball = register_simple_fireball(sim.registry());
+    const AbilityId fireball = register_simple_fireball(sim.ability_registry());
 
     auto caster = sim.world().spawn(EntityKind::Player);
     auto target = sim.world().spawn(EntityKind::Enemy);
@@ -76,7 +76,7 @@ TEST_CASE("input cast command resolves through sim", "[sim]") {
 
 TEST_CASE("input commands accumulate and process in tick order", "[sim]") {
     Sim sim;
-    const AbilityId fireball = register_simple_fireball(sim.registry());
+    const AbilityId fireball = register_simple_fireball(sim.ability_registry());
 
     auto caster = sim.world().spawn(EntityKind::Player);
     auto target = sim.world().spawn(EntityKind::Enemy);
@@ -111,7 +111,7 @@ TEST_CASE("delayed cast resolves after correct number of ticks", "[sim]") {
         .damage_stat = StatId::FireDamage,
         .base_amount = 50.0f,
     });
-    const AbilityId fireball = sim.registry().register_ability(std::move(def));
+    const AbilityId fireball = sim.ability_registry().register_ability(std::move(def));
 
     auto caster = sim.world().spawn(EntityKind::Player);
     auto target = sim.world().spawn(EntityKind::Enemy);
@@ -191,7 +191,7 @@ TEST_CASE("rng float output is in unit range", "[sim][rng]") {
 TEST_CASE("identical input sequences produce identical outcomes", "[sim][determinism]") {
     auto run_scenario = [](uint64_t seed) {
         Sim sim(seed);
-        const AbilityId fireball = register_simple_fireball(sim.registry());
+        const AbilityId fireball = register_simple_fireball(sim.ability_registry());
 
         auto caster = sim.world().spawn(EntityKind::Player);
         auto target = sim.world().spawn(EntityKind::Enemy);

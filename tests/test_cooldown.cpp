@@ -29,7 +29,7 @@ AbilityId register_cd_fireball(AbilityRegistry& registry, uint32_t cooldown) {
 
 TEST_CASE("ability with no cooldown can fire repeatedly", "[cooldown]") {
     Sim sim;
-    const AbilityId fireball = register_cd_fireball(sim.registry(), 0);
+    const AbilityId fireball = register_cd_fireball(sim.ability_registry(), 0);
 
     auto caster = sim.world().spawn(EntityKind::Player);
     auto target = sim.world().spawn(EntityKind::Enemy);
@@ -49,7 +49,7 @@ TEST_CASE("ability with no cooldown can fire repeatedly", "[cooldown]") {
 
 TEST_CASE("ability on cooldown is blocked until ready", "[cooldown]") {
     Sim sim;
-    const AbilityId fireball = register_cd_fireball(sim.registry(), 30);
+    const AbilityId fireball = register_cd_fireball(sim.ability_registry(), 30);
 
     auto caster = sim.world().spawn(EntityKind::Player);
     auto target = sim.world().spawn(EntityKind::Enemy);
@@ -87,7 +87,7 @@ TEST_CASE("ability on cooldown is blocked until ready", "[cooldown]") {
 
 TEST_CASE("cooldown is per-caster", "[cooldown]") {
     Sim sim;
-    const AbilityId fireball = register_cd_fireball(sim.registry(), 30);
+    const AbilityId fireball = register_cd_fireball(sim.ability_registry(), 30);
 
     auto caster_a = sim.world().spawn(EntityKind::Player);
     auto caster_b = sim.world().spawn(EntityKind::Player);

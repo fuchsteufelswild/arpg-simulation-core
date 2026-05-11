@@ -20,6 +20,15 @@ const AbilityDefinition* AbilityRegistry::find(AbilityId id) const noexcept {
     return &definitions_[index];
 }
 
+AbilityId AbilityRegistry::find_by_name(std::string_view name) const noexcept {
+    for (const auto& def : definitions_) {
+        if (def.name == name) {
+            return def.id;
+        }
+    }
+    return NoAbility;
+}
+
 void AbilityRegistry::clear() noexcept {
     definitions_.clear();
 }

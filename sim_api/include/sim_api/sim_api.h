@@ -118,6 +118,12 @@ SIM_API const char* sim_version(void);
 
 SIM_API SimHandle sim_create(uint32_t seed);
 
+SIM_API int32_t sim_load_content(SimHandle sim,
+                                 const char* abilities_toml,
+                                 size_t abilities_len,
+                                 const char* archetypes_toml,
+                                 size_t archetypes_len);
+
 SIM_API void sim_destroy(SimHandle sim);
 
 SIM_API void sim_advance(SimHandle sim, uint64_t target_tick);
@@ -140,6 +146,11 @@ SIM_API uint64_t sim_debug_spawn_entity(SimHandle sim,
                                         uint16_t entity_kind,
                                         float pos_x,
                                         float pos_y);
+
+SIM_API uint64_t sim_spawn_archetype(SimHandle sim,
+                                     const char* archetype_name,
+                                     float pos_x,
+                                     float pos_y);
 
 #ifdef __cplusplus
 }

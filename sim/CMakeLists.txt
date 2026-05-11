@@ -22,6 +22,10 @@ add_library(sim STATIC
     src/input_log.cpp
     src/world_hash.cpp
     src/replay.cpp
+    src/data/archetype_loader.cpp
+    src/data/bootstrap.cpp
+    src/ai_system.cpp
+    src/entity_archetype_registry.cpp
 )
 
 target_include_directories(sim
