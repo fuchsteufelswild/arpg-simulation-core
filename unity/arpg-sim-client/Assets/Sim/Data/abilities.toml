@@ -1,0 +1,52 @@
+[[ability]]
+name = "Fireball"
+tags = ["Fire", "Spell", "Projectile"]
+cast_time_ticks = 15
+cooldown_ticks = 180
+travel_speed = 25.0
+
+[[ability.effects]]
+type = "Damage"
+damage_stat = "FireDamage"
+base_amount = 40.0
+
+[[ability.effects]]
+type = "ApplyStatus"
+status = "Ignite"
+chance = 1.0
+magnitude = 5.0
+duration_ticks = 120
+
+[[ability]]
+name = "IceNova"
+tags = ["Cold", "Spell", "AoE"]
+cast_time_ticks = 0
+cooldown_ticks = 30
+
+[[ability.effects]]
+type = "Damage"
+damage_stat = "ColdDamage"
+base_amount = 30.0
+
+[[ability.effects]]
+type = "ApplyStatus"
+status = "Chill"
+chance = 1.0
+magnitude = 0.30
+duration_ticks = 90
+
+[[ability]]
+name = "ChainLightning"
+tags = ["Lightning", "Spell"]
+cast_time_ticks = 10
+
+[[ability.effects]]
+type = "Damage"
+damage_stat = "LightningDamage"
+base_amount = 50.0
+
+[[ability.effects]]
+type = "Chain"
+max_chains = 4
+falloff = 0.7
+radius = 12.0

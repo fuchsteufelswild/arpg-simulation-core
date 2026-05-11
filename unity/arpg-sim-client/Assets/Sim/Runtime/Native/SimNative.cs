@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Sim.Native
 {
@@ -12,6 +13,11 @@ namespace Sim.Native
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr sim_create(uint seed);
+
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int sim_load_content(IntPtr sim,
+            byte[] abilitiesToml, UIntPtr abilitiesLen,
+            byte[] archetypesToml, UIntPtr archetypesLen);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern void sim_destroy(IntPtr sim);
@@ -34,6 +40,11 @@ namespace Sim.Native
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern ulong sim_debug_spawn_entity(IntPtr sim, ushort entityKind, float posX, float posY);
+
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        public static extern ulong sim_spawn_archetype(IntPtr sim,
+            [MarshalAs(UnmanagedType.LPUTF8Str)] string archetypeName,
+            float posX, float posY);
 
         public static SimSafeHandle Create(uint seed)
         {

@@ -462,6 +462,7 @@ MonoBehaviour:
   _simRunner: {fileID: 1821656787}
   _entityRoot: {fileID: 837117995}
   _entityVisualSettings: {fileID: 11400000, guid: ed076f0b64329ec429422a9496e41573, type: 2}
+  _coreSettings: {fileID: 11400000, guid: 15ed57ae3ccf55e4a8b30191ccc2c12e, type: 2}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -637,8 +638,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0e9ac49b2464ad044a8ceec7a2e2efa5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Sim.Runtime::Sim.SimRunner
-  _seed: 1
-  _logTicks: 1
+  _coreSettings: {fileID: 11400000, guid: 15ed57ae3ccf55e4a8b30191ccc2c12e, type: 2}
 --- !u!4 &1821656788
 Transform:
   m_ObjectHideFlags: 0

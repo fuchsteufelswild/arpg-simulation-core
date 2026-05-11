@@ -1,0 +1,40 @@
+[[archetype]]
+name = "Player"
+kind = "Player"
+max_health = 500.0
+
+[[archetype]]
+name = "Goblin"
+kind = "Enemy"
+max_health = 80.0
+
+[archetype.ai]
+preferred_ability = "Fireball"
+attack_range = 10.0
+detection_range = 20.0
+leash_range = 0.0
+move_speed = 0.4
+
+[[archetype]]
+name = "IceMage"
+kind = "Enemy"
+max_health = 120.0
+
+[archetype.ai]
+preferred_ability = "IceNova"
+attack_range = 6.0
+detection_range = 18.0
+leash_range = 30.0
+move_speed = 0.25
+
+[[archetype]]
+name = "StormCaller"
+kind = "Enemy"
+max_health = 150.0
+
+[archetype.ai]
+preferred_ability = "ChainLightning"
+attack_range = 14.0
+detection_range = 25.0
+leash_range = 40.0
+move_speed = 0.3
